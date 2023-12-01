@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { BEASTMASTER, BRUTE, CONJURER, DELVER, FRIAR, RASCAL, SKALD, WARDEN, WARRIOR } from './HeroPath'
 import { Chip } from '@mui/material'
 import { DWARF, ELF } from './Ancestry'
+import Spacer from './Spacer'
 
 const BOON_TYPES = [
   { heroPath: BEASTMASTER, label: 'Melee OR Ranged tasks' },
@@ -51,9 +52,9 @@ export default function Boons({ ancestry, heroPath, inclinations }) {
   return (
     <div style={{ flex: 1, border: '1px solid darkGray', padding: 10 }}>
       <b>Boons</b>
-      <div>
+      <div style={{ marginTop: 10 }}>
         { boons.map(bt => <BoonChip key={bt.label || bt.inclination} boonObj={bt}/>) }
-        { boons.length === 0 && <span>No boons. Boons come from Ancestry, Hero Path, and Inclinations</span> }
+        { boons.length === 0 && <span>No boons yet. Boons come from Ancestry, Hero Path, and Inclinations</span> }
       </div>
     </div>
   )

@@ -1,5 +1,4 @@
-import React, { useEffect, useState } from 'react'
-import Field from './Field'
+import React, { useState } from 'react'
 
 import { Stack, TextField } from '@mui/material'
 import Ancestry from './Ancestry'
@@ -10,13 +9,21 @@ import Karma from './Karma'
 import HeroDie from './HeroDie'
 import Spacer from './Spacer'
 import Boons from './Boons'
+import Roller from './Roller'
+
+// To add:
+// Dice roller
+// Armor save & Miraculous save
+// Items
+// Conjurer special abilities
+// Potions maybe
+// Scrolls maybe
 
 export default function Character() {
   const [name, setName] = useState('')
   const [heroPath, setHeroPath] = useState('')
   const [ancestry, setAncestry] = useState(null)
   const [inclinations, setInclinations] = useState([])
-  const [boons, setBoons] = useState([])
 
   const handleAncestry = (ancestry) => setAncestry(ancestry)
   const handleHeroPath = (hp) => setHeroPath(hp)
@@ -24,8 +31,12 @@ export default function Character() {
   const handleInclinations = (inclinations) => setInclinations(inclinations)
 
   return (
-    <div style={{display: 'flex', flexDirection: 'column', width: 720, height: 500, padding: 20, background: '#eee' }}>
-      <TextField label="Name" value={name} onChange={(ev) => setName(ev.target.value)} />
+    <div style={{display: 'flex', flexDirection: 'column', width: 680 }}>
+      <Stack direction="row">
+        <TextField sx={{ flex: 5 }} label="Name" value={name} onChange={(ev) => setName(ev.target.value)} />
+        <Spacer/>
+        <Roller/>
+      </Stack>
 
       <Stack direction="row"
              justifyContent="space-between"
@@ -49,7 +60,7 @@ export default function Character() {
       <Boons ancestry={ancestry}
              heroPath={heroPath}
              inclinations={inclinations}
-             onCalculate={setBoons}
+             onCalculate={() => 0}
       />
     </div>
   )

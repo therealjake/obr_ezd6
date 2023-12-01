@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { Divider, FormControl, InputLabel, MenuItem, Select, Stack } from '@mui/material'
+import { FormControl, InputLabel, MenuItem, Select, Stack } from '@mui/material'
 
 export const HUMAN = 'Human'
 export const ELF = 'Elf'
@@ -10,7 +10,7 @@ export const GOBLIN = 'Goblin'
 export default function Ancestry({ onChange }) {
   const [ancestry, setAncestry] = useState('')
 
-  useEffect(() => onChange(ancestry), [ancestry])
+  useEffect(() => onChange(ancestry), [ancestry, onChange])
 
   const handleAncestry = (ev) => setAncestry(ev.target.value)
 

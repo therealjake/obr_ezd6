@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { Box, Checkbox, Chip, FormControl, Grid, InputLabel, List, ListItem, MenuItem, Select, Stack } from '@mui/material'
+import { Box, Checkbox, Chip, FormControl, Grid, InputLabel, MenuItem, Select } from '@mui/material'
 import { HUMAN } from './Ancestry'
 
 export const ALCHEMIST = 'Alchemist'

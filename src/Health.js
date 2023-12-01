@@ -1,6 +1,6 @@
 import { React, useEffect, useState } from 'react'
 import { BRUTE } from './HeroPath'
-import { Box, Button, Divider, FormLabel, Stack, TextField } from '@mui/material'
+import { Box, Button, Stack, TextField } from '@mui/material'
 import { AddCircle, RemoveCircle } from '@mui/icons-material'
 
 export default function Health({ heroPath }) {

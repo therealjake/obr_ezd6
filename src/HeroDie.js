@@ -1,6 +1,6 @@
 import { React, useState } from 'react'
-import { Box, Button, Checkbox, Stack, TextField, ToggleButton } from '@mui/material'
-import { AddCircle, RemoveCircle, ViewInAr } from '@mui/icons-material'
+import { Checkbox, Stack, ToggleButton } from '@mui/material'
+import { ViewInAr } from '@mui/icons-material'
 import Spacer from './Spacer'
 import { FATE_TOUCHED } from './Inclinations'
 
