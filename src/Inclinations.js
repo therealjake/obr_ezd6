@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react'
 import { Box, Checkbox, Chip, FormControl, Grid, InputLabel, MenuItem, Select } from '@mui/material'
 import { HUMAN } from './Ancestry'
+import { DELVER } from './HeroPath'
+import { LoadCharacterField, SaveCharacterField, WipeCharacterField } from './CharacterStore'
 
 export const ALCHEMIST = 'Alchemist'
 export const DANDY = 'Dandy'
@@ -11,6 +13,7 @@ export const IRON_WILL = 'Iron Will'
 export const MARKSMAN = 'Marksman'
 export const SNEAKY = 'Sneaky'
 export const TRAPFINDER = 'Trap Finder'
+export const HEDGE_WIZARD = 'Hedge Wizard'
 
 const INCLINATION_TYPES = [
   { inclination: ALCHEMIST,
@@ -18,12 +21,12 @@ const INCLINATION_TYPES = [
     boon: 'Identifying alchemical substances and a boon identifying alchemical substances',
   },
   { inclination: 'Attuned', note: 'You are able to fight blind. You can escape areas of obscured visibility' },
-  { inclination: 'Born blessed', note: 'You start each session with 6 karma instead of 3' },
+  { inclination: 'Born blessed', note: 'You start with 6 karma instead of 3 and recover 2 instead of 1 overnight' },
   { inclination: 'Catlike', note: 'You can only be knocked prone by a crit. You have 4+ miraculous saves when falling.' },
   { inclination: 'Checkmate', note: 'You can intercept foes before they attack a target near you. You get a free-action opportunity attack if enemies move out of melee with you. If you hit, they cannot move.' },
   { inclination: 'Chirurgeon', note: 'You can heal allies 1 Strike given a few minutes and supplies. You start with 6 bandages.' },
   { inclination: DANDY,
-    note: 'Your slick speaking and appearnce given you a boon on all social checks',
+    note: 'Your slick speaking and appearance give you a boon on all social checks',
     boon: 'All social checks',
   },
   { inclination: DANGER_SENSE,
@@ -33,13 +36,13 @@ const INCLINATION_TYPES = [
   { inclination: 'Devout', note: 'You may call on your diety for MIRACLES' },
   { inclination: 'Faithful', note: 'Demons and Undead can only hit you on a 5+' },
   { inclination: 'Familiar', note: 'A small magical imp obeys your simple commands.' },
-  { inclination: FATE_TOUCHED, note: 'You start each session with 2 hero dice' },
+  { inclination: FATE_TOUCHED, note: 'You have an extra hero die' },
   { inclination: FIGHTER,
     note: 'You are trained in melee weapons. Does not stack.',
     boon: 'Melee attacks'
   },
   { inclination: 'Hatred of the Unholy', note: 'Your attacks are powered by hatred of the undead and demons. If you roll a 6 while attacking either, you automatically inflict one additional strike and can keep rolling the crit' },
-  { inclination: 'Hedge Wizard', note: 'You can use scrolls to cast spells. Start with 2 random scrolls' },
+  { inclination: HEDGE_WIZARD, note: 'You can use scrolls to cast spells. Start with 2 random scrolls' },
   { inclination: 'Inspiring', note: 'You can share karma points with anyone you can see' },
   { inclination: IRON_WILL,
     note: 'You have boons to resist mental attacks and fear',
@@ -57,33 +60,48 @@ const INCLINATION_TYPES = [
     boon: 'Stealth tasks',
   },
   { inclination: 'Sticky Fingers', note: 'You can steal any small object. Roll a 1D6. On a 1 your theft is noticed.' },
-  { inclination: 'Swift Attack', note: 'You can melee attack every enemy next to you. Roll for each target' },
+  { inclination: 'Swift Attack', note: 'You can melee attack every enemy next to you. Roll separately for each target.' },
   { inclination: 'Thaumaturgy', note: 'You can conjure minor + temporary magickal effects at will. Minor telekinesis or illusions' },
   { inclination: 'Tough Bastard', note: 'You are hard to kill. When you are about to lose your last strike roll 1D6. On a 4+, ignore the damage.' },
   { inclination: TRAPFINDER,
     note: 'You have boons to find and disarm traps',
     boon: 'Finding and disarming traps',
   },
-  { inclination: 'Treasure Sense', note: 'You always detect hidden treasure if nearby' },
-  { inclination: 'Victory in Failure', note: 'Once a turn, earn 2 karma instead of 1 on a failed roll' },
+  { inclination: 'Treasure Sense', note: 'You always detect hidden treasure if nearby.' },
+  { inclination: 'Victory in Failure', note: 'Once a turn, earn 2 karma instead of 1 on a failed roll.' },
 ]
 
-export default function Inclinations({ ancestry, onChange }) {
+export default function Inclinations({ ancestry, heroPath, onChange }) {
   const [inclinations, setInclinations] = useState([])
 
-  const handleInclination = (ev) => setInclinations(ev.target.value)
+  const handleInclination = (ev) => {
+    const _inc = ev.target.value
+    setInclinations(_inc)
+    SaveCharacterField('inclinations', _inc)
+  }
 
   useEffect(() => {
     const inclinationObjects = INCLINATION_TYPES.filter(it => inclinations.includes(it.inclination))
     onChange(inclinationObjects)
   }, [inclinations])
 
-  const maxAllowed = (ancestry === HUMAN) ? 3 : 2
+  useEffect(() => {
+    const _i = LoadCharacterField('inclinations')
+    const _iArray = _i ? _i.split(',').map(v => v.trim()) : []
+    setInclinations(_iArray)
+  }, [])
+
+  let maxAllowed = 2
+  if (ancestry === HUMAN) maxAllowed++
+  if (heroPath === DELVER) maxAllowed++
+
   const inclination = `Inclinations (Select ${maxAllowed})`
 
   return (
-    <div style={{ marginTop: 10, display: 'flex', flexDirection: 'column' }}>
-      <FormControl style={{ flex: 1, marginTop: 20, width: 600 }}>
+    <div style={{ marginTop: 0, display: 'flex', flexDirection: 'column' }}>
+      <FormControl style={{ flex: 1, width: 600 }}
+                   error={inclinations.length > maxAllowed}
+      >
         <InputLabel id="inclinations">{inclination}</InputLabel>
         <Select labelId="inclinations"
                 value={inclinations}
@@ -121,11 +139,11 @@ export default function Inclinations({ ancestry, onChange }) {
         </Select>
       </FormControl>
 
-      <ul>
+      {/* <ul style={{ marginBottom: 0 }}>
       { INCLINATION_TYPES.filter(it => inclinations.includes(it.inclination)).map(it => (
         <li key={it.inclination}>{it.note}</li>
       ))}
-      </ul>
+      </ul> */}
     </div>
   )
 }

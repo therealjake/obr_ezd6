@@ -1,25 +1,36 @@
 import { React, useEffect, useState } from 'react'
 import { BRUTE } from './HeroPath'
-import { Box, Button, Stack, TextField } from '@mui/material'
+import { Box, Button, IconButton, Stack, TextField, Typography } from '@mui/material'
 import { AddCircle, RemoveCircle } from '@mui/icons-material'
+import { LoadCharacterField, SaveCharacterField } from './CharacterStore'
 
-export default function Health({ heroPath }) {
+export default function Health({ heroPath, strikes, onChangeStrikes }) {
   let maxHealth = 3
 
   if (heroPath === BRUTE) {
     maxHealth = 5
   }
 
-  useEffect(() => setCurrentHealth(maxHealth), [maxHealth])
+  useEffect(() => {
+    const _h = LoadCharacterField('health')
+    onChangeStrikes(LoadCharacterField('health'))
+  }, [])
 
-  const [currentHealth, setCurrentHealth] = useState(maxHealth)
+  const damage = () => {
+    const _h = Math.max(0, strikes - 1)
+    onChangeStrikes(_h)
+    SaveCharacterField('health', _h)
+  }
 
-  const damage = () => setCurrentHealth(Math.max(0, currentHealth - 1))
-  const heal = () => setCurrentHealth(Math.min(maxHealth, currentHealth + 1))
+  const heal = () => {
+    const _h = Math.min(maxHealth, strikes + 1)
+    onChangeStrikes(_h)
+    SaveCharacterField('health', _h)
+  }
 
   return (
-    <div style={{ flex: 1, border: '1px solid darkGray', padding: 10 }}>
-      Strikes <small>(Health)</small>
+    <div style={{ flex: 1, border: '1px solid darkGray', borderRadius: 4, paddingTop: 10, paddingLeft: 5, paddingRight: 5 }}>
+      <Typography variant="h6">Strikes <small>(Health)</small></Typography>
       <Stack direction="row"
             style={{
               flexDirection: 'row',
@@ -28,18 +39,22 @@ export default function Health({ heroPath }) {
               paddingTop: 15,
             }}
       >
-        <Button onClick={damage}><RemoveCircle/></Button>
+        <IconButton color="primary" onClick={damage}><RemoveCircle/></IconButton>
 
-        <Box width={80}>
-          <TextField disabled value={currentHealth} size="small" label="Current" />
+        <Box width={60} sx={{ flex: 2 }}>
+          <TextField disabled value={strikes} size="small" label="Cur" />
         </Box>
 
-        <Box width={80}>
-          <TextField disabled value={maxHealth} size="small" label="Maximum" />
+        <Box width={60}>
+          <TextField disabled value={maxHealth} size="small" label="Max" />
         </Box>
 
-        <Button onClick={heal}><AddCircle/></Button>
+        <IconButton color="primary" onClick={heal}><AddCircle/></IconButton>
       </Stack>
+
+      { strikes < 1 && (
+        <Typography variant='body2' sx={{ m: 1 }}>NOT REAL HEALTHY</Typography>
+      )}
     </div>
   )
 }

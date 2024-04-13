@@ -1,25 +1,28 @@
 import React, { useEffect, useRef, useState } from 'react'
 
 import { Box, Button, Dialog, DialogActions, DialogContent, DialogTitle, Stack, TextField } from '@mui/material'
-import { AddCircle, LooksOne, LooksTwo, Looks3TwoTone, Looks4, Looks5, Looks6, RemoveCircle } from '@mui/icons-material'
+import { AddCircle, LooksOneTwoTone, LooksTwoTwoTone, Looks3TwoTone, Looks4TwoTone, Looks5TwoTone, Looks6TwoTone, RemoveCircle } from '@mui/icons-material'
+import { BoonChip } from './Boons'
 
 function rollDie() {
   return 1 + Math.floor(Math.random() * 6)
 }
 
 function Die({ roll }) {
-  if (roll === 1) return <LooksOne sx={{ color: 'red' }} />
-  if (roll === 2) return <LooksTwo />
-  if (roll === 3) return <Looks3TwoTone size={24} />
-  if (roll === 4) return <Looks4 size={36} />
-  if (roll === 5) return <Looks5 size={48} />
-  if (roll === 6) return <Looks6 sx={{ color: 'green' }} />
+  if (roll === 1) return <LooksOneTwoTone sx={{ color: 'red', width: 48, height: 48 }} />
+  if (roll === 2) return <LooksTwoTwoTone sx={{ width: 48, height: 48 }} />
+  if (roll === 3) return <Looks3TwoTone sx={{ width: 48, height: 48 }}  />
+  if (roll === 4) return <Looks4TwoTone sx={{ width: 48, height: 48 }}  />
+  if (roll === 5) return <Looks5TwoTone sx={{ width: 48, height: 48 }}  />
+  if (roll === 6) return <Looks6TwoTone sx={{ width: 48, height: 48, color: 'green' }} />
   return <span>{roll}</span>
 }
 
 function AnimatedDie({ roll }) {
   const [visibleRoll, setVisibleRoll] = useState(rollDie())
   let rollsLeft = 10
+
+  useEffect(() => { setVisibleRoll(roll.value) }, [roll.value])
 
   useEffect(() => {
     const intervalId = setInterval(() => {
@@ -43,7 +46,7 @@ class RollValue {
   }
 }
 
-export default function Roller() {
+export default function Roller({ boons, karma, onSpendKarma }) {
   const [open, setOpen] = useState(false)
   const [diceCount, setDiceCount] = useState(1)
   const [rolls, setRolls] = useState([])
@@ -80,6 +83,29 @@ export default function Roller() {
 
   const handleDiceChange = (ev) => setDiceCount(ev.target.value)
 
+  const upgrade = () => {
+    if (karma < 1) {
+      return
+    }
+
+    let highestValue = 0
+    let highestRollIndex = -1
+    rolls[0].forEach((roll, idx) => {
+      if (roll.value >= highestValue) {
+        highestValue = roll.value
+        highestRollIndex = idx
+      }
+    })
+    if (highestValue >= 6) {
+      return
+    }
+
+    const newRolls = [...rolls]
+    newRolls[0][highestRollIndex].value += 1
+    setRolls(newRolls)
+    onSpendKarma()
+  }
+
   return (
     <>
       <Button variant="outlined" sx={{ flex: 1 }} onClick={() => setOpen(true)}>Roll Dice!</Button>
@@ -111,6 +137,20 @@ export default function Roller() {
                 { roll.map(r => (idx === 0) ? <AnimatedDie key={r.id} roll={r} /> : <Die key={r.id} roll={r.value} />) }
               </Stack>
             ))}
+
+            { rolls.length > 0 && (
+              <>
+                <span>Karma available: {karma}</span>
+                <Button onClick={upgrade} disabled={karma < 1}>Spend Karma</Button>
+              </>
+            )}
+          </div>
+
+          <div>
+            <strong>Boons</strong>
+            <div style={{ marginTop: 5 }}>
+              { boons.map(bt => <BoonChip key={bt.label || bt.inclination} compact boonObj={bt}/>) }
+            </div>
           </div>
         </DialogContent>
         <DialogActions>

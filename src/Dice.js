@@ -19,23 +19,6 @@ export default function Dice() {
     }
   }
 
-  const rollN = (n) => {
-    if (!OBR.isReady) {
-      window.alert('No OBR found')
-      return
-    }
-
-    const rolls = []
-    let max = 0
-    for (var i = 0; i < n; i++) {
-      const roll = 1 + Math.round(Math.random() * 6)
-      max = Math.max(max, roll)
-      rolls.push(roll)
-    }
-
-    console.log('Rolled these dice: ' + rolls.join(', ') + '. The best roll was :' + max)
-  }
-
   return (
     <div style={{ width }}>
       <Stack>
