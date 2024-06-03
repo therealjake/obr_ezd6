@@ -1,8 +1,16 @@
 import { React, useEffect, useState } from 'react'
 import { BRUTE } from './HeroPath'
-import { Box, Button, IconButton, Stack, TextField, Typography } from '@mui/material'
-import { AddCircle, RemoveCircle } from '@mui/icons-material'
+import { Box, IconButton, Stack, TextField, Typography } from '@mui/material'
+import { AddCircle, CircleOutlined, HideSourceOutlined, RemoveCircle } from '@mui/icons-material'
 import { LoadCharacterField, SaveCharacterField } from './CharacterStore'
+
+function Strike({ isChecked, onIncrement, onDecrement }) {
+  if (isChecked) {
+    return <HideSourceOutlined onClick={onDecrement} />
+  } else {
+    return <CircleOutlined onClick={onIncrement} />
+  }
+}
 
 export default function Health({ heroPath, strikes, onChangeStrikes }) {
   let maxHealth = 3
@@ -27,6 +35,47 @@ export default function Health({ heroPath, strikes, onChangeStrikes }) {
     onChangeStrikes(_h)
     SaveCharacterField('health', _h)
   }
+
+  return (
+    <div style={{ flex: 1, border: '1px solid darkGray', borderRadius: 4, paddingTop: 10, paddingLeft: 5, paddingRight: 5 }}>
+      <Typography variant="h6">Strikes</Typography>
+      <Stack direction="row"
+            style={{
+              flexDirection: 'row',
+              justifyContent: 'space-around',
+              alignItems: 'center',
+              paddingTop: 5,
+            }}
+      >
+        <Strike isChecked={strikes < 1} onIncrement={damage} onDecrement={heal} />
+        <Strike isChecked={strikes < 2} onIncrement={damage} onDecrement={heal} />
+        <Strike isChecked={strikes < 3} onIncrement={damage} onDecrement={heal} />
+      </Stack>
+
+      {maxHealth === 5 && (
+        <Stack direction="row"
+              style={{
+                flexDirection: 'row',
+                justifyContent: 'space-around',
+                alignItems: 'center',
+                paddingTop: 5,
+                width: '100%'
+              }}
+        >
+          <div/>
+          <Strike isChecked={strikes < 4} onIncrement={damage} onDecrement={heal} />
+          <Strike isChecked={strikes < 5} onIncrement={damage} onDecrement={heal} />
+          <div/>
+        </Stack>
+      )}
+
+      { strikes < 1 && (
+        <div style={{ width: '100%' }}>
+          <Typography variant='body2' sx={{ mt: 1 }}><center>NOT REAL HEALTHY! Remember your hero dice and karma</center></Typography>
+        </div>
+      )}
+    </div>
+  )
 
   return (
     <div style={{ flex: 1, border: '1px solid darkGray', borderRadius: 4, paddingTop: 10, paddingLeft: 5, paddingRight: 5 }}>

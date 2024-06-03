@@ -15,6 +15,9 @@ export const SNEAKY = 'Sneaky'
 export const TRAPFINDER = 'Trap Finder'
 export const HEDGE_WIZARD = 'Hedge Wizard'
 
+export const CHIRURGEON = 'Chirurgeon'
+export const LOCKPICKING = 'Lockpicking'
+
 const INCLINATION_TYPES = [
   { inclination: ALCHEMIST,
     note: 'Potion master. Start with 2 healing or random potions.',
@@ -24,7 +27,7 @@ const INCLINATION_TYPES = [
   { inclination: 'Born blessed', note: 'You start with 6 karma instead of 3 and recover 2 instead of 1 overnight' },
   { inclination: 'Catlike', note: 'You can only be knocked prone by a crit. You have 4+ miraculous saves when falling.' },
   { inclination: 'Checkmate', note: 'You can intercept foes before they attack a target near you. You get a free-action opportunity attack if enemies move out of melee with you. If you hit, they cannot move.' },
-  { inclination: 'Chirurgeon', note: 'You can heal allies 1 Strike given a few minutes and supplies. You start with 6 bandages.' },
+  { inclination: CHIRURGEON, note: 'You can heal allies 1 Strike given a few minutes and supplies. You start with 6 bandages.' },
   { inclination: DANDY,
     note: 'Your slick speaking and appearance give you a boon on all social checks',
     boon: 'All social checks',
@@ -48,7 +51,7 @@ const INCLINATION_TYPES = [
     note: 'You have boons to resist mental attacks and fear',
     boon: 'Resist mental and fear attacks',
   },
-  { inclination: 'Lockpicking', note: 'You can pick any lock. Roll 1D6 to see how fast you are (higher is better). You start with 3 lockpicks, and they break on a roll of 1.' },
+  { inclination: LOCKPICKING, note: 'You can pick any lock. Roll 1D6 to see how fast you are (higher is better). You start with 3 lockpicks, and they break on a roll of 1.' },
   { inclination: MARKSMAN,
     note: 'You have a boon in ranged weapons. Does not stack.',
     boon: 'Ranged attacks',

@@ -1,8 +1,9 @@
 import React, { useEffect, useRef, useState } from 'react'
 
-import { Box, Button, Dialog, DialogActions, DialogContent, DialogTitle, Stack, TextField } from '@mui/material'
+import { Box, Button, Dialog, DialogActions, DialogContent, DialogTitle, Stack } from '@mui/material'
 import { AddCircle, LooksOneTwoTone, LooksTwoTwoTone, Looks3TwoTone, Looks4TwoTone, Looks5TwoTone, Looks6TwoTone, RemoveCircle } from '@mui/icons-material'
 import { BoonChip } from './Boons'
+import { BroadcastHandler } from './BroadcastHandler'
 
 function rollDie() {
   return 1 + Math.floor(Math.random() * 6)
@@ -33,7 +34,7 @@ function AnimatedDie({ roll }) {
       } else {
         setVisibleRoll(rollDie())
       }
-    }, 150)
+    }, 50)
   }, [])
 
   return <Die roll={visibleRoll}/>
@@ -48,24 +49,21 @@ class RollValue {
 
 export default function Roller({ boons, karma, onSpendKarma }) {
   const [open, setOpen] = useState(false)
-  const [diceCount, setDiceCount] = useState(1)
   const [rolls, setRolls] = useState([])
 
   const doClose = () => {
     setOpen(false)
-    setDiceCount(1)
-    setRolls([])
   }
-
-  const lose = () => setDiceCount(Math.max(diceCount - 1, 0))
-  const gain = () => setDiceCount(diceCount + 1)
 
   const doClear = () => {
-    setDiceCount(1)
     setRolls([])
   }
 
-  const doRoll = () => {
+  const doRoll = (diceCount) => {
+    if (!rolls || rolls.length === 0) {
+      BroadcastHandler.markNewRollSet()
+    }
+
     const newRolls = []
     let max = 0
     let min = 6
@@ -76,12 +74,11 @@ export default function Roller({ boons, karma, onSpendKarma }) {
       newRolls.push(new RollValue(roll))
     }
 
+    BroadcastHandler.sendRoll(newRolls)
     const rollHistory = [...rolls]
     rollHistory.unshift(newRolls)
     setRolls(rollHistory)
   }
-
-  const handleDiceChange = (ev) => setDiceCount(ev.target.value)
 
   const upgrade = () => {
     if (karma < 1) {
@@ -104,6 +101,8 @@ export default function Roller({ boons, karma, onSpendKarma }) {
     newRolls[0][highestRollIndex].value += 1
     setRolls(newRolls)
     onSpendKarma()
+
+    BroadcastHandler.sendUpgrade(newRolls[0])
   }
 
   return (
@@ -114,35 +113,26 @@ export default function Roller({ boons, karma, onSpendKarma }) {
 
         <DialogContent>
           <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-            <Stack direction="row"
-                   style={{
-                    flexDirection: 'row',
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                    paddingTop: 15,
-                    marginBottom: 10,
-                   }}
-              >
-              <Button onClick={lose}><RemoveCircle/></Button>
-
-              <Box width={60}>
-                <TextField onChange={handleDiceChange} value={diceCount} size="small" />
-              </Box>
-
-              <Button onClick={gain}><AddCircle/></Button>
+            <Stack direction="row" sx={{ width: '100%', mb: 2, justifyContent: 'space-evenly' }}>
+              <Button variant="outlined" onClick={() => { doRoll(1) }}>Roll 1 Die</Button>
+              <Button variant="outlined" onClick={() => { doRoll(2) }}>Roll 2 Dice</Button>
+              <Button variant="outlined" onClick={() => { doRoll(3) }}>Roll 3 Dice</Button>
+              <Button variant="outlined" onClick={() => { doRoll(4) }}>Roll 4 Dice</Button>
             </Stack>
 
             { rolls.map((roll, idx) => (
-              <Stack key={idx} direction="row">
+              <Stack key={idx} direction="row" sx={{ mb: 2 }}>
                 { roll.map(r => (idx === 0) ? <AnimatedDie key={r.id} roll={r} /> : <Die key={r.id} roll={r.value} />) }
               </Stack>
             ))}
 
             { rolls.length > 0 && (
-              <>
-                <span>Karma available: {karma}</span>
-                <Button onClick={upgrade} disabled={karma < 1}>Spend Karma</Button>
-              </>
+              <Stack direction="row" sx={{ justifyContent: 'space-around', width: '100%' }}>
+                <Stack direction="column">
+                  <span>Karma available: {karma}</span>
+                  <Button onClick={upgrade} disabled={karma < 1}>Spend Karma</Button>
+                </Stack>
+              </Stack>
             )}
           </div>
 

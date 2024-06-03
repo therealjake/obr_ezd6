@@ -1,7 +1,15 @@
 import { React, useEffect } from 'react'
 import { Box, IconButton, Stack, TextField, Typography } from '@mui/material'
-import { AddCircle, RemoveCircle } from '@mui/icons-material'
+import { AddCircle, CircleOutlined, HideSourceOutlined, RemoveCircle } from '@mui/icons-material'
 import { LoadCharacterField, SaveCharacterField } from './CharacterStore'
+
+function Point({ isChecked, onIncrement, onDecrement }) {
+  if (isChecked) {
+    return <HideSourceOutlined onClick={onDecrement} />
+  } else {
+    return <CircleOutlined onClick={onIncrement} />
+  }
+}
 
 export default function Karma({ karma, onChangeKarma }) {
   useEffect(() => updateKarma(Number(LoadCharacterField('karma'))), [])
@@ -22,16 +30,23 @@ export default function Karma({ karma, onChangeKarma }) {
             flexDirection: 'row',
             justifyContent: 'center',
             alignItems: 'center',
-            paddingTop: 15,
+            paddingTop: 5,
           }}
       >
-        <IconButton color="primary" onClick={lose}><RemoveCircle/></IconButton>
-
-        <Box width={40}>
-          <TextField disabled value={karma} size="small" />
-        </Box>
-
-        <IconButton color="primary" onClick={gain}><AddCircle/></IconButton>
+        <Point isChecked={karma < 1} onIncrement={lose} onDecrement={gain} />
+        <Point isChecked={karma < 2} onIncrement={lose} onDecrement={gain} />
+        <Point isChecked={karma < 3} onIncrement={lose} onDecrement={gain} />
+      </Stack>
+      <Stack direction="row"
+            style={{
+            flexDirection: 'row',
+            justifyContent: 'center',
+            alignItems: 'center',
+          }}
+      >
+        <Point isChecked={karma < 4} onIncrement={lose} onDecrement={gain} />
+        <Point isChecked={karma < 5} onIncrement={lose} onDecrement={gain} />
+        <Point isChecked={karma < 6} onIncrement={lose} onDecrement={gain} />
       </Stack>
     </div>
   )

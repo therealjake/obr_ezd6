@@ -28,32 +28,18 @@ export const theme = createTheme({
 
 function App() {
   const [tab, setTab] = useState(0)
-  const [gameMaster, setGameMaster] = useState(true)
-
-  // useEffect(() => {
-  //   const loadData = async () => {
-  //     console.log('In App.loadData')
-
-  //     if (OBR.isReady) {
-  //       const player = OBR.player
-  //       const id = await player.getId()
-  //       console.log('I am player ID ', id)
-  //       const metadata = await player.getMetadata()
-  //       console.log('My metadata: ', metadata)
-  //     } else {
-  //       console.log('Turns out OBR is not ready. Weird')
-  //     }
-  //   }
-
-  //   OBR.onReady(() => loadData())
-  // }, [])
+  const [gameMaster, setGameMaster] = useState(window.location.search.includes('gm=true'))
 
   const gmCheck = async () => {
+    console.log('Checking for GM role')
     const player = OBR.player
     const role = await player.getRole()
+
     if (role === 'GM') {
       setGameMaster(true)
       setTab(3)
+    } else {
+      setGameMaster(false)
     }
   }
   useEffect(() => OBR.onReady(gmCheck), [])
@@ -77,7 +63,7 @@ function App() {
       { tab === 2 && <MagicRules /> }
       { tab === 3 && <GmScreen /> }
 
-      <Typography variant='caption'>v0.4.25</Typography>
+      <Typography variant='caption'>v0.5.1</Typography>
     </div>
   </ThemeProvider>
 }

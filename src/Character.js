@@ -11,10 +11,12 @@ import Spacer from './Spacer'
 import Boons from './Boons'
 import Roller from './Roller'
 import CharacterFeatures from './CharacterFeatures'
-import Gear from './Gear'
 import MiraculousSave from './MiraculousSave'
 import Armor from './Armor'
 import { LoadCharacterField, SaveCharacterField, syncCharacter } from './CharacterStore'
+import { BroadcastHandler } from './BroadcastHandler'
+import Inventory from './Inventory'
+import Allies from './Allies'
 
 // --- To add ---
 // Sharing die rolls
@@ -36,6 +38,7 @@ export default function Character() {
   const [boons, setBoons] = useState([])
   const [karma, setKarma] = useState(3)
   const [strikes, setStrikes] = useState(3)
+  const [inventory, setInventory] = useState('')
 
   const handleName = (ev) => {
     const newName = ev.target.value
@@ -53,7 +56,6 @@ export default function Character() {
       SaveCharacterField('heroPath', hp)
     }
 
-    console.log('Subclass is', sc)
     setSubclass(sc)
     if (sc) {
       SaveCharacterField('subclass', sc)
@@ -66,18 +68,22 @@ export default function Character() {
 
   useEffect(() => {
     const doSync = async () => {
-      syncCharacter({ name, ancestry, heroPath, subclass, inclinations, karma, strikes: 0 })
+      syncCharacter({ name, ancestry, heroPath, subclass, inclinations, karma, strikes, inventory })
+      BroadcastHandler.notifyOfCharacterUpdate()
     }
 
     doSync()
-  }, [name, ancestry, heroPath, subclass, inclinations])
+  }, [name, ancestry, heroPath, subclass, inclinations, strikes, karma, inventory])
 
   return (
     <div style={{display: 'flex', marginTop: 10, flexDirection: 'column', width: 680 }}>
       <Stack direction="row">
         <TextField sx={{ flex: 5 }} label="Name" value={name} onChange={handleName} />
         <Spacer/>
-        <Roller boons={boons} karma={karma} onSpendKarma={() => setKarma(karma - 1)} />
+        <Roller boons={boons}
+                karma={karma}
+                onSpendKarma={() => setKarma(karma - 1)}
+        />
       </Stack>
 
       <Stack direction="row"
@@ -114,7 +120,9 @@ export default function Character() {
              onCalculate={(b) => setBoons(b)}
       />
 
-      <Gear heroPath={heroPath} inclinations={inclinations} />
+      <Inventory characterName={name} heroPath={heroPath} inclinations={inclinations} onInventoryChange={setInventory} />
+
+      <Allies />
     </div>
   )
 }

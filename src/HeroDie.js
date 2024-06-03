@@ -39,10 +39,10 @@ export default function HeroDie({ inclinations }) {
 
       <Stack direction="column"
             style={{
-            flexDirection: 'column',
+            flexDirection: 'row',
             justifyContent: 'space-around',
             alignItems: 'center',
-            marginTop: 8,
+            marginTop: 0,
           }}
         >
           <ToggleButton value={firstDie} onChange={toggleFirstDie} size="small">

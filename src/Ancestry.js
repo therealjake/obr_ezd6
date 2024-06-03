@@ -12,7 +12,7 @@ const ancestries = [
   { type: HUMAN, note: 'Versatile and skillful, humans get one extra inclination.' },
   { type: ELF, note: 'Ancient and wise, you can see twice as far in dim light and have a boon to resist mind-altering magicks.' },
   { type: DWARF, note: 'From long years exploring dungeons you can see twice as far in dim light and have a boon to resist poison.' },
-  { type: HALFLING, note: 'Start with a second breakfast (which heals 2 strikes and can be eaten as a free action). Foes larger than you have a hard time catching you (+1 to your target #)' },
+  { type: HALFLING, note: 'Start with a second breakfast (a healing potion which heals 2 strikes). Large foes have a hard time catching you (+1 to your target #)' },
   { type: GOBLIN, note: 'Whenever you move without attacking, you can jump behind the smallest cover, avoiding being attacked for a turn. As a nocturnal creature you also see twice as far in dim light' },
 ]
 
