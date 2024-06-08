@@ -1,6 +1,6 @@
 import { React, useEffect } from 'react'
-import { Box, IconButton, Stack, TextField, Typography } from '@mui/material'
-import { AddCircle, CircleOutlined, HideSourceOutlined, RemoveCircle } from '@mui/icons-material'
+import { Stack, Typography } from '@mui/material'
+import { CircleOutlined, HideSourceOutlined } from '@mui/icons-material'
 import { LoadCharacterField, SaveCharacterField } from './CharacterStore'
 
 function Point({ isChecked, onIncrement, onDecrement }) {

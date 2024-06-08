@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { createContext, useEffect, useState } from 'react'
 
 import { Stack, TextField } from '@mui/material'
 import Ancestry from './Ancestry'
@@ -17,6 +17,7 @@ import { LoadCharacterField, SaveCharacterField, syncCharacter } from './Charact
 import { BroadcastHandler } from './BroadcastHandler'
 import Inventory from './Inventory'
 import Allies from './Allies'
+// import CharacterStatContext from './CharacterStatContext'
 
 // --- To add ---
 // Sharing die rolls
@@ -29,6 +30,11 @@ import Allies from './Allies'
 // --- Done ---
 // Sharing character data
 
+const noop = () => null
+export const KarmaContext = createContext({ karma: 0, setKarma: noop })
+export const HeroDieContext = createContext({ heroDice: 0, setHeroDice: noop })
+export const StrikesContext = createContext({ strikes: 0, setStrikes: noop })
+
 export default function Character() {
   const [name, setName] = useState('')
   const [heroPath, setHeroPath] = useState('')
@@ -37,6 +43,7 @@ export default function Character() {
   const [inclinations, setInclinations] = useState([])
   const [boons, setBoons] = useState([])
   const [karma, setKarma] = useState(3)
+  const [heroDice, setHeroDice] = useState(1)
   const [strikes, setStrikes] = useState(3)
   const [inventory, setInventory] = useState('')
 
@@ -76,53 +83,55 @@ export default function Character() {
   }, [name, ancestry, heroPath, subclass, inclinations, strikes, karma, inventory])
 
   return (
-    <div style={{display: 'flex', marginTop: 10, flexDirection: 'column', width: 680 }}>
-      <Stack direction="row">
-        <TextField sx={{ flex: 5 }} label="Name" value={name} onChange={handleName} />
-        <Spacer/>
-        <Roller boons={boons}
-                karma={karma}
-                onSpendKarma={() => setKarma(karma - 1)}
+    // <CharacterStatContext>
+      <div style={{display: 'flex', marginTop: 10, flexDirection: 'column', width: 680 }}>
+        <Stack direction="row">
+          <TextField sx={{ flex: 5 }} label="Name" value={name} onChange={handleName} />
+          <Spacer/>
+          <Roller boons={boons}
+                  karma={karma}
+                  onSpendKarma={() => setKarma(karma - 1)}
+          />
+        </Stack>
+
+        <Stack direction="row"
+              justifyContent="space-between"
+              style={{ marginTop: 20 }}
+        >
+          <Ancestry onChange={handleAncestry} />
+          <Spacer />
+          <HeroPath onChange={handleHeroPath} />
+        </Stack>
+
+        <Inclinations ancestry={ancestry} heroPath={heroPath} onChange={handleInclinations} />
+
+        <Stack direction="row" style={{ display: 'flex', justifyContent: 'space-between', marginTop: 20 }}>
+          <Health heroPath={heroPath} strikes={strikes} onChangeStrikes={setStrikes} />
+          <Karma karma={karma} onChangeKarma={setKarma} />
+          <HeroDie inclinations={inclinations} />
+          <Armor heroPath={heroPath} inventory={inventory} />
+          <MiraculousSave heroPath={heroPath} />
+        </Stack>
+
+        <Stack direction="row" style={{ display: 'flex', justifyContent: 'space-between', marginTop: 20 }}>
+        </Stack>
+
+        <CharacterFeatures ancestry={ancestry}
+                          heroPath={heroPath}
+                          subclass={subclass}
+                          inclinations={inclinations}
         />
-      </Stack>
 
-      <Stack direction="row"
-             justifyContent="space-between"
-             style={{ marginTop: 20 }}
-      >
-        <Ancestry onChange={handleAncestry} />
-        <Spacer />
-        <HeroPath onChange={handleHeroPath} />
-      </Stack>
+        <Boons ancestry={ancestry}
+              heroPath={heroPath}
+              inclinations={inclinations}
+              onCalculate={(b) => setBoons(b)}
+        />
 
-      <Inclinations ancestry={ancestry} heroPath={heroPath} onChange={handleInclinations} />
+        <Inventory characterName={name} heroPath={heroPath} inclinations={inclinations} onInventoryChange={setInventory} />
 
-      <Stack direction="row" style={{ display: 'flex', justifyContent: 'space-between', marginTop: 20 }}>
-        <Health heroPath={heroPath} strikes={strikes} onChangeStrikes={setStrikes} />
-        <Karma karma={karma} onChangeKarma={setKarma} />
-        <HeroDie inclinations={inclinations} />
-        <Armor heroPath={heroPath} />
-        <MiraculousSave heroPath={heroPath} />
-      </Stack>
-
-      <Stack direction="row" style={{ display: 'flex', justifyContent: 'space-between', marginTop: 20 }}>
-      </Stack>
-
-      <CharacterFeatures ancestry={ancestry}
-                         heroPath={heroPath}
-                         subclass={subclass}
-                         inclinations={inclinations}
-      />
-
-      <Boons ancestry={ancestry}
-             heroPath={heroPath}
-             inclinations={inclinations}
-             onCalculate={(b) => setBoons(b)}
-      />
-
-      <Inventory characterName={name} heroPath={heroPath} inclinations={inclinations} onInventoryChange={setInventory} />
-
-      <Allies />
-    </div>
+        <Allies />
+      </div>
+    // </CharacterStatContext>
   )
 }

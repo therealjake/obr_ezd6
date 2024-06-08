@@ -5,11 +5,11 @@ import { AddCircle, LooksOneTwoTone, LooksTwoTwoTone, Looks3TwoTone, Looks4TwoTo
 import { BoonChip } from './Boons'
 import { BroadcastHandler } from './BroadcastHandler'
 
-function rollDie() {
+export function rollDie() {
   return 1 + Math.floor(Math.random() * 6)
 }
 
-function Die({ roll }) {
+export function Die({ roll }) {
   if (roll === 1) return <LooksOneTwoTone sx={{ color: 'red', width: 48, height: 48 }} />
   if (roll === 2) return <LooksTwoTwoTone sx={{ width: 48, height: 48 }} />
   if (roll === 3) return <Looks3TwoTone sx={{ width: 48, height: 48 }}  />

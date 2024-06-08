@@ -1,12 +1,13 @@
 import { Box, Stack, TextField, Typography } from '@mui/material'
 import React from 'react'
-import { BEASTMASTER, DELVER, FRIAR, SKALD, WARDEN, WARRIOR } from './HeroPath'
+import { BEASTMASTER, DELVER, FRIAR, RASCAL, SKALD, WARDEN, WARRIOR } from './HeroPath'
+import SaveRoller from './SaveRoller'
 
 const LIGHT = 'Light'
 const MEDIUM = 'Medium'
 const HEAVY = 'Heavy'
 
-export default function Armor({ heroPath }) {
+export default function Armor({ heroPath, inventory }) {
   let type = LIGHT
 
   if (heroPath === DELVER || heroPath === WARDEN || heroPath === FRIAR || heroPath === SKALD || heroPath === BEASTMASTER) {
@@ -16,12 +17,17 @@ export default function Armor({ heroPath }) {
     type = HEAVY
   }
 
-  let save = '6'
+  let save = 6
   if (type === MEDIUM) {
-    save = '5+'
+    save = 5
   } else if (type === HEAVY) {
-    save = "3+"
+    save = 4
+    if ((inventory || '').includes('Shield')) {
+      save = 3
+    }
   }
+
+  const saveWithAdvantage = heroPath === RASCAL
 
   return (
     <div style={{
@@ -35,10 +41,12 @@ export default function Armor({ heroPath }) {
       <Typography variant="h6">Armor</Typography>
 
       <Box width={60} sx={{ mb: 1 }}>
-        <TextField disabled value={save} size="small" />
+        <TextField disabled value={save + (save < 6 ? '+' : '')} size="small" />
       </Box>
 
       <span>{type}</span>
+
+      <SaveRoller saveTarget={save} saveWithAdvantage={saveWithAdvantage} />
     </div>
   )
 }
