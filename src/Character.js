@@ -17,7 +17,7 @@ import { LoadCharacterField, SaveCharacterField, syncCharacter } from './Charact
 import { BroadcastHandler } from './BroadcastHandler'
 import Inventory from './Inventory'
 import Allies from './Allies'
-// import CharacterStatContext from './CharacterStatContext'
+import CharacterStatContext, { useKarmaContext } from './CharacterStatContext'
 
 // --- To add ---
 // Sharing die rolls
@@ -30,11 +30,6 @@ import Allies from './Allies'
 // --- Done ---
 // Sharing character data
 
-const noop = () => null
-export const KarmaContext = createContext({ karma: 0, setKarma: noop })
-export const HeroDieContext = createContext({ heroDice: 0, setHeroDice: noop })
-export const StrikesContext = createContext({ strikes: 0, setStrikes: noop })
-
 export default function Character() {
   const [name, setName] = useState('')
   const [heroPath, setHeroPath] = useState('')
@@ -42,10 +37,10 @@ export default function Character() {
   const [ancestry, setAncestry] = useState(null)
   const [inclinations, setInclinations] = useState([])
   const [boons, setBoons] = useState([])
-  const [karma, setKarma] = useState(3)
-  const [heroDice, setHeroDice] = useState(1)
   const [strikes, setStrikes] = useState(3)
   const [inventory, setInventory] = useState('')
+
+  const { karma } = useKarmaContext()
 
   const handleName = (ev) => {
     const newName = ev.target.value
@@ -73,6 +68,7 @@ export default function Character() {
 
   useEffect(() => setName(LoadCharacterField('name') || ''), [])
 
+  // TODO: Extract syncing-to-owlbear elsewhere
   useEffect(() => {
     const doSync = async () => {
       syncCharacter({ name, ancestry, heroPath, subclass, inclinations, karma, strikes, inventory })
@@ -83,15 +79,12 @@ export default function Character() {
   }, [name, ancestry, heroPath, subclass, inclinations, strikes, karma, inventory])
 
   return (
-    // <CharacterStatContext>
+    <CharacterStatContext>
       <div style={{display: 'flex', marginTop: 10, flexDirection: 'column', width: 680 }}>
         <Stack direction="row">
           <TextField sx={{ flex: 5 }} label="Name" value={name} onChange={handleName} />
           <Spacer/>
-          <Roller boons={boons}
-                  karma={karma}
-                  onSpendKarma={() => setKarma(karma - 1)}
-          />
+          <Roller boons={boons} />
         </Stack>
 
         <Stack direction="row"
@@ -107,7 +100,7 @@ export default function Character() {
 
         <Stack direction="row" style={{ display: 'flex', justifyContent: 'space-between', marginTop: 20 }}>
           <Health heroPath={heroPath} strikes={strikes} onChangeStrikes={setStrikes} />
-          <Karma karma={karma} onChangeKarma={setKarma} />
+          <Karma />
           <HeroDie inclinations={inclinations} />
           <Armor heroPath={heroPath} inventory={inventory} />
           <MiraculousSave heroPath={heroPath} />
@@ -132,6 +125,6 @@ export default function Character() {
 
         <Allies />
       </div>
-    // </CharacterStatContext>
+    </CharacterStatContext>
   )
 }

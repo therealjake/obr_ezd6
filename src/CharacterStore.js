@@ -27,14 +27,14 @@ export function syncCharacter({
   }, 2000)
 }
 
-export async function loadCharacter() {
-  if (OBR.isReady) {
-    const player = OBR.player
-    const metadata = await player.getMetadata()
-    metadata['com.snak.obr_ezd6'] = { latest: new Date().getTime() }
-    await player.setMetadata(metadata)
-  }
-}
+// export async function loadCharacter() {
+//   if (OBR.isReady) {
+//     const player = OBR.player
+//     const metadata = await player.getMetadata()
+//     metadata['com.snak.obr_ezd6'] = { latest: new Date().getTime() }
+//     await player.setMetadata(metadata)
+//   }
+// }
 
 export function LoadCharacterField(field) {
   return localStorage.getItem(field)
