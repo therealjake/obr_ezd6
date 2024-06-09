@@ -20,17 +20,6 @@ import Allies from './Allies'
 import CharacterStatContext, { useKarmaContext, useStrikesContext } from './CharacterStatContext'
 import { Boon, Inclination } from './GameTypes'
 
-// --- To add ---
-// Sharing die rolls
-//   I think I need to add to a list of items (and be listening for changes)
-//   How do I prevent overwrites and data collisions? Maybe just via unique IDs?
-//   How do I keep the list of dice rolls manageable?
-// Reset character sheet
-// Change presentation of strikes
-
-// --- Done ---
-// Sharing character data
-
 export default function Character() {
   const [name, setName] = useState('')
   const [heroPath, setHeroPath] = useState('')
@@ -53,8 +42,7 @@ export default function Character() {
     }
 
     doSync()
-  }, [])
-  // }, [name, ancestry, heroPath, subclass, inclinations, strikes, karma, inventory])
+  }, [name, ancestry, heroPath, subclass, inclinations, strikes, karma, inventory])
 
   const handleName = (ev: React.ChangeEvent<HTMLInputElement>) => {
     const newName = ev.target.value
@@ -62,11 +50,10 @@ export default function Character() {
     if (newName) {
       SaveCharacterField('name', newName)
     }
-    console.log('name change')
   }
 
   const handleAncestry = (_ancestry: string) => {
-    setAncestry(ancestry)
+    setAncestry(_ancestry)
   }
 
   const handleHeroPath = (hp: string, sc?: string) => {
@@ -81,12 +68,9 @@ export default function Character() {
       setSubclass(sc)
       SaveCharacterField('subclass', sc)
     }
-    console.log('hero path change')
   }
 
-  const handleInclinations = (inclinations: Array<Inclination>) => setInclinations(inclinations)
-
-  console.log('Rendering character sheet')
+  const handleInclinations = (_inclinations: Array<Inclination>) => setInclinations(_inclinations)
 
   return (
     <CharacterStatContext>
