@@ -1,8 +1,9 @@
-import React, { useEffect, useState } from 'react'
-import { Box, Checkbox, Chip, FormControl, Grid, InputLabel, MenuItem, Select } from '@mui/material'
+import { useEffect, useState } from 'react'
+import { Box, Checkbox, Chip, FormControl, Grid, InputLabel, MenuItem, Select, SelectChangeEvent } from '@mui/material'
 import { HUMAN } from './Ancestry'
 import { DELVER } from './HeroPath'
-import { LoadCharacterField, SaveCharacterField, WipeCharacterField } from './CharacterStore'
+import { LoadCharacterField, SaveCharacterField } from './CharacterStore'
+import { Inclination } from './GameTypes'
 
 export const ALCHEMIST = 'Alchemist'
 export const DANDY = 'Dandy'
@@ -21,7 +22,7 @@ export const LOCKPICKING = 'Lockpicking'
 const INCLINATION_TYPES = [
   { inclination: ALCHEMIST,
     note: 'Potion master. Start with 2 healing or random potions.',
-    boon: 'Identifying alchemical substances and a boon identifying alchemical substances',
+    boonLabel: 'Identifying alchemical substances and a boon identifying alchemical substances',
   },
   { inclination: 'Attuned', note: 'You are able to fight blind. You can escape areas of obscured visibility' },
   { inclination: 'Born blessed', note: 'You start with 6 karma instead of 3 and recover 2 instead of 1 overnight' },
@@ -30,11 +31,11 @@ const INCLINATION_TYPES = [
   { inclination: CHIRURGEON, note: 'You can heal allies 1 Strike given a few minutes and supplies. You start with 6 bandages.' },
   { inclination: DANDY,
     note: 'Your slick speaking and appearance give you a boon on all social checks',
-    boon: 'All social checks',
+    boonLabel: 'All social checks',
   },
   { inclination: DANGER_SENSE,
     note: 'You cannot be surprised and have a boon avoiding traps',
-    boon: 'Avoiding traps',
+    boonLabel: 'Avoiding traps',
   },
   { inclination: 'Devout', note: 'You may call on your diety for MIRACLES' },
   { inclination: 'Faithful', note: 'Demons and Undead can only hit you on a 5+' },
@@ -42,25 +43,25 @@ const INCLINATION_TYPES = [
   { inclination: FATE_TOUCHED, note: 'You have an extra hero die' },
   { inclination: FIGHTER,
     note: 'You are trained in melee weapons. Does not stack.',
-    boon: 'Melee attacks'
+    boonLabel: 'Melee attacks'
   },
   { inclination: 'Hatred of the Unholy', note: 'Your attacks are powered by hatred of the undead and demons. If you roll a 6 while attacking either, you automatically inflict one additional strike and can keep rolling the crit' },
   { inclination: HEDGE_WIZARD, note: 'You can use scrolls to cast spells. Start with 2 random scrolls' },
   { inclination: 'Inspiring', note: 'You can share karma points with anyone you can see' },
   { inclination: IRON_WILL,
     note: 'You have boons to resist mental attacks and fear',
-    boon: 'Resist mental and fear attacks',
+    boonLabel: 'Resist mental and fear attacks',
   },
   { inclination: LOCKPICKING, note: 'You can pick any lock. Roll 1D6 to see how fast you are (higher is better). You start with 3 lockpicks, and they break on a roll of 1.' },
   { inclination: MARKSMAN,
     note: 'You have a boon in ranged weapons. Does not stack.',
-    boon: 'Ranged attacks',
+    boonLabel: 'Ranged attacks',
   },
   { inclination: 'Nimbus of Light', note: 'Once a day, as a free action you can summon a floating globe of light which follows you until dismissed.' },
   { inclination: 'Slippery', note: 'Escape any non-attack danger by rolling a 4+' },
   { inclination: SNEAKY,
     note: 'You have a boon to hide and move around unseen',
-    boon: 'Stealth tasks',
+    boonLabel: 'Stealth tasks',
   },
   { inclination: 'Sticky Fingers', note: 'You can steal any small object. Roll a 1D6. On a 1 your theft is noticed.' },
   { inclination: 'Swift Attack', note: 'You can melee attack every enemy next to you. Roll separately for each target.' },
@@ -68,19 +69,29 @@ const INCLINATION_TYPES = [
   { inclination: 'Tough Bastard', note: 'You are hard to kill. When you are about to lose your last strike roll 1D6. On a 4+, ignore the damage.' },
   { inclination: TRAPFINDER,
     note: 'You have boons to find and disarm traps',
-    boon: 'Finding and disarming traps',
+    boonLabel: 'Finding and disarming traps',
   },
   { inclination: 'Treasure Sense', note: 'You always detect hidden treasure if nearby.' },
   { inclination: 'Victory in Failure', note: 'Once a turn, earn 2 karma instead of 1 on a failed roll.' },
 ]
 
-export default function Inclinations({ ancestry, heroPath, onChange }) {
-  const [inclinations, setInclinations] = useState([])
+type InclinationsProps = {
+  ancestry?: string,
+  heroPath?: string,
+  onChange: (inclinations: Inclination[]) => void,
+}
 
-  const handleInclination = (ev) => {
-    const _inc = ev.target.value
-    setInclinations(_inc)
-    SaveCharacterField('inclinations', _inc)
+export default function Inclinations({ ancestry, heroPath, onChange }: InclinationsProps) {
+  const [inclinations, setInclinations] = useState<Array<string>>([])
+
+  const handleInclination = (ev: SelectChangeEvent<typeof inclinations>) => {
+    const rawValue = ev.target.value
+
+    const newValue = typeof rawValue === 'string' ? rawValue.split(',') : rawValue
+    setInclinations(newValue)
+
+    // TODO: Extract this elsewhere maybe?
+    SaveCharacterField('inclinations', rawValue)
   }
 
   useEffect(() => {
@@ -132,7 +143,7 @@ export default function Inclinations({ ancestry, heroPath, onChange }) {
                   </Grid>
 
                   <Grid item xs={2}></Grid>
-                  <Grid item xs={10} style={{ textWrap: 'wrap' }}>
+                  <Grid item xs={10} sx={{ textWrap: 'wrap' }}>
                     {it.note}
                   </Grid>
                 </Grid>
@@ -141,12 +152,6 @@ export default function Inclinations({ ancestry, heroPath, onChange }) {
           }
         </Select>
       </FormControl>
-
-      {/* <ul style={{ marginBottom: 0 }}>
-      { INCLINATION_TYPES.filter(it => inclinations.includes(it.inclination)).map(it => (
-        <li key={it.inclination}>{it.note}</li>
-      ))}
-      </ul> */}
     </div>
   )
 }

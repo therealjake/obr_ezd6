@@ -1,18 +1,25 @@
-import { React } from 'react'
+import React from 'react'
 import { Checkbox, Stack, ToggleButton, Typography } from '@mui/material'
 import { ViewInAr } from '@mui/icons-material'
 import Spacer from './Spacer'
 import { FATE_TOUCHED } from './Inclinations'
 import { useHeroDiceContext } from './CharacterStatContext'
+import { Inclination } from './GameTypes'
 
-export default function HeroDie({ inclinations }) {
+type HeroDieProps = {
+  inclinations: Array<Inclination>,
+}
+
+export default function HeroDie({ inclinations }: HeroDieProps) {
   const { heroDice, setHeroDice } = useHeroDiceContext()
   const showSecondDie = inclinations.some(bt => bt.inclination === FATE_TOUCHED)
 
-  const toggleDie = (ev) => {
-    const wasChecked = !ev.target.checked
+  const toggleDie = (ev: React.MouseEvent<HTMLElement>, checked: boolean) => {
+    if (checked === undefined) {
+      return
+    }
 
-    if (wasChecked) {
+    if (checked) {
       setHeroDice(Math.max(0, heroDice - 1))
     } else {
       setHeroDice(Math.min(2, heroDice + 1))

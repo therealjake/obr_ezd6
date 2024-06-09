@@ -1,9 +1,13 @@
-import React from 'react'
 import { Stack, Typography } from '@mui/material'
 import { CircleOutlined, HideSourceOutlined } from '@mui/icons-material'
 import { useKarmaContext } from './CharacterStatContext'
 
-function Point({ isChecked, onIncrement, onDecrement }) {
+type KarmaPointProps = {
+  isChecked: boolean
+  onIncrement: () => void
+  onDecrement: () => void
+}
+function KarmaPoint({ isChecked, onIncrement, onDecrement }: KarmaPointProps) {
   if (isChecked) {
     return <HideSourceOutlined onClick={onDecrement} />
   } else {
@@ -28,9 +32,9 @@ export default function Karma() {
             paddingTop: 5,
           }}
       >
-        <Point isChecked={karma < 1} onIncrement={lose} onDecrement={gain} />
-        <Point isChecked={karma < 2} onIncrement={lose} onDecrement={gain} />
-        <Point isChecked={karma < 3} onIncrement={lose} onDecrement={gain} />
+        <KarmaPoint isChecked={karma < 1} onIncrement={lose} onDecrement={gain} />
+        <KarmaPoint isChecked={karma < 2} onIncrement={lose} onDecrement={gain} />
+        <KarmaPoint isChecked={karma < 3} onIncrement={lose} onDecrement={gain} />
       </Stack>
       <Stack direction="row"
             style={{
@@ -39,9 +43,9 @@ export default function Karma() {
             alignItems: 'center',
           }}
       >
-        <Point isChecked={karma < 4} onIncrement={lose} onDecrement={gain} />
-        <Point isChecked={karma < 5} onIncrement={lose} onDecrement={gain} />
-        <Point isChecked={karma < 6} onIncrement={lose} onDecrement={gain} />
+        <KarmaPoint isChecked={karma < 4} onIncrement={lose} onDecrement={gain} />
+        <KarmaPoint isChecked={karma < 5} onIncrement={lose} onDecrement={gain} />
+        <KarmaPoint isChecked={karma < 6} onIncrement={lose} onDecrement={gain} />
       </Stack>
     </div>
   )

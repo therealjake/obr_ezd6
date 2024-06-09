@@ -1,11 +1,37 @@
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import OBR from '@owlbear-rodeo/sdk'
 import { Button, List, Stack, Typography } from '@mui/material'
-import { BroadcastHandler, CHARACTER_UPDATE_CHANNEL } from './BroadcastHandler'
+import { BroadcastHandler } from './BroadcastHandler'
 import DieLog from './DieLog'
+import { Inclination } from './GameTypes'
+
+type CharacterFromMetadata = {
+  name: string,
+  ancestry: string,
+  heroPath: string,
+  subclass: string,
+  inclinations: Array<Inclination>,
+  karma: number,
+  strikes: number,
+  inventory: string,
+}
+
+type CharacterInParty = {
+  id: string,
+  playerName: string,
+  characterName: string,
+  ancestry?: string,
+  heroPath?: string,
+  subclass?: string,
+  heroPathName?: string,
+  inclinations?: Array<string>,
+  karma?: number,
+  strikes?: number,
+  inventory?: string,
+}
 
 export default function GmScreen() {
-  const [players, setPlayers] = useState([])
+  const [players, setPlayers] = useState<Array<CharacterInParty>>([])
 
   const loadData = async () => {
     if (OBR.isReady) {
@@ -17,10 +43,9 @@ export default function GmScreen() {
 
         for (const p of players) {
           if (p) {
-            const name = p.name
             const md = p.metadata
 
-            const character = md['com.snak.obr_ezd6/character']
+            const character = md['com.snak.obr_ezd6/character'] as CharacterFromMetadata
             if (character) {
               newP.push({
                 id: p.id,

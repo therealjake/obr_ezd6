@@ -1,34 +1,40 @@
-import React from 'react'
-
 import { Button, Typography } from '@mui/material'
-import { AddCircle, LooksOneTwoTone, LooksTwoTwoTone, Looks3TwoTone, Looks4TwoTone, Looks5TwoTone, Looks6TwoTone, RemoveCircle } from '@mui/icons-material'
+import { LooksOneTwoTone, LooksTwoTwoTone, Looks3TwoTone, Looks4TwoTone, Looks5TwoTone, Looks6TwoTone } from '@mui/icons-material'
 
-export function D1({ size }) {
+type DieProps = {
+  size?: number
+}
+
+export function D1({ size }: DieProps) {
   const ss = size ? Number(size) : 20
   return <LooksOneTwoTone sx={{ color: "red", width: ss, height: ss, verticalAlign: 'middle' }} />
 }
-export function D2({ size }) {
+export function D2({ size }: DieProps) {
   const ss = size ? Number(size) : 20
   return <LooksTwoTwoTone sx={{ width: ss, height: ss, verticalAlign: 'middle' }} />
 }
-export function D3({ size }) {
+export function D3({ size }: DieProps) {
   const ss = size ? Number(size) : 20
   return <Looks3TwoTone sx={{ width: ss, height: ss, verticalAlign: 'middle' }} />
 }
-export function D4({ size }) {
+export function D4({ size }: DieProps) {
   const ss = size ? Number(size) : 20
   return <Looks4TwoTone sx={{ width: ss, height: ss, verticalAlign: 'middle' }} />
 }
-export function D5({ size }) {
+export function D5({ size }: DieProps) {
   const ss = size ? Number(size) : 20
   return <Looks5TwoTone sx={{ width: ss, height: ss, verticalAlign: 'middle' }} />
 }
-export function D6({ size }) {
+export function D6({ size }: DieProps) {
   const ss = size ? Number(size) : 20
   return <Looks6TwoTone sx={{ color: "green", width: ss, height: ss, verticalAlign: 'middle' }} />
 }
 
-export default function Rules({ onJumpToMagick }) {
+type RulesProps = {
+  onJumpToMagick: () => void
+}
+
+export default function Rules({ onJumpToMagick }: RulesProps) {
   return (
     <div style={{ marginTop: 20, height: '100%', width: 680 }}>
       <Typography variant="h4">How To Play EZD6</Typography>

@@ -1,7 +1,7 @@
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 
-import { Box, Button, Dialog, DialogActions, DialogContent, DialogTitle, Stack } from '@mui/material'
-import { AddCircle, LooksOneTwoTone, LooksTwoTwoTone, Looks3TwoTone, Looks4TwoTone, Looks5TwoTone, Looks6TwoTone, RemoveCircle } from '@mui/icons-material'
+import { Button, Dialog, DialogActions, DialogContent, DialogTitle, Stack } from '@mui/material'
+import { LooksOneTwoTone, LooksTwoTwoTone, Looks3TwoTone, Looks4TwoTone, Looks5TwoTone, Looks6TwoTone } from '@mui/icons-material'
 import { BoonChip } from './Boons'
 import { BroadcastHandler } from './BroadcastHandler'
 
@@ -35,7 +35,7 @@ function AnimatedDie({ roll }) {
         setVisibleRoll(rollDie())
       }
     }, 50)
-  }, [])
+  }, [roll.value, rollsLeft])
 
   return <Die roll={visibleRoll}/>
 }

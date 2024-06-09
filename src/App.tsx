@@ -63,7 +63,7 @@ function App() {
       { tab === 2 && <MagicRules /> }
       { tab === 3 && <GmScreen /> }
 
-      <Typography variant='caption'>v0.5.1</Typography>
+      <Typography variant='caption'>v0.6.0</Typography>
     </div>
   </ThemeProvider>
 }

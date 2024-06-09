@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from 'react'
-import { Grid, FormControl, InputLabel, MenuItem, Select, Stack } from '@mui/material'
+import { useEffect, useState } from 'react'
+import { Grid, FormControl, InputLabel, MenuItem, Select, Stack, SelectChangeEvent } from '@mui/material'
 import { LoadCharacterField, SaveCharacterField } from './CharacterStore'
 
 export const BEASTMASTER = 'Beastmaster'
@@ -50,13 +50,17 @@ const schools = [
   { type: SHAPESHIFTER, note: 'Reform your own body to take on new powers' },
 ]
 
-export default function HeroPath({ onChange }) {
+type HeroPathProps = {
+  onChange: (path: string, school: string) => void
+}
+
+export default function HeroPath({ onChange }: HeroPathProps) {
   const [path, setPath] = useState('')
   const [school, setSchool] = useState('')
 
   useEffect(() => onChange(path, school), [path, school])
 
-  const handlePath = (ev) => {
+  const handlePath = (ev: SelectChangeEvent<string>) => {
     const _p = ev.target.value
     setPath(_p)
     setSchool('')
@@ -64,17 +68,17 @@ export default function HeroPath({ onChange }) {
     SaveCharacterField('subclass', '')
   }
 
-  const handleSchool = (ev) => {
+  const handleSchool = (ev: SelectChangeEvent<string>) => {
     const _s = ev.target.value
     setSchool(_s)
     SaveCharacterField('subclass', _s)
   }
 
   useEffect(() => {
-    const loadData = async () => {
-      const _hp = await LoadCharacterField('heroPath')
+    const loadData = () => {
+      const _hp = LoadCharacterField('heroPath') as string
       setPath(_hp)
-      const _sc = await LoadCharacterField('subclass')
+      const _sc = LoadCharacterField('subclass') as string
       setSchool(_sc)
     }
     loadData()
@@ -100,7 +104,7 @@ export default function HeroPath({ onChange }) {
                   </Grid>
 
                   <Grid item xs={1}></Grid>
-                  <Grid item xs={11} style={{ textWrap: 'wrap' }}>
+                  <Grid item xs={11} sx={{ textWrap: 'wrap' }}>
                     {a.note}
                   </Grid>
                 </Grid>
@@ -128,7 +132,7 @@ export default function HeroPath({ onChange }) {
                     </Grid>
 
                     <Grid item xs={1}></Grid>
-                    <Grid item xs={11} style={{ textWrap: 'wrap' }}>
+                    <Grid item xs={11} sx={{ textWrap: 'wrap' }}>
                       {s.note}
                     </Grid>
                   </Grid>

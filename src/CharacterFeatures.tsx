@@ -1,6 +1,7 @@
-import React, { useEffect, useState } from 'react'
-import { AIR_ELEMENTALIST, BEASTMASTER, BLASTMASTER, BOTANICALIST, BRUTE, CONJURER, DELVER, EARTH_ELEMENTALIST, ELEMENTALIST, FIRE_ELEMENTALIST, FRIAR, ILLUSIONIST, NECROMANCER, RASCAL, SEER, SHADOWEAVER, SHAPESHIFTER, SKALD, WARDEN, WARRIOR, WATER_ELEMENTALIST } from './HeroPath'
-import { Chip, Typography } from '@mui/material'
+import React from 'react'
+
+import { AIR_ELEMENTALIST, BEASTMASTER, BLASTMASTER, BOTANICALIST, BRUTE, CONJURER, DELVER, EARTH_ELEMENTALIST, FIRE_ELEMENTALIST, FRIAR, ILLUSIONIST, NECROMANCER, RASCAL, SEER, SHADOWEAVER, SHAPESHIFTER, SKALD, WARDEN, WARRIOR, WATER_ELEMENTALIST } from './HeroPath'
+import { Typography } from '@mui/material'
 import { DWARF, ELF, GOBLIN, HALFLING, HUMAN } from './Ancestry'
 
 const ANCESTRY_FEATURES = [
@@ -11,7 +12,6 @@ const ANCESTRY_FEATURES = [
   { ancestry: HALFLING, featureName: 'Underfoot', feature: 'Larger foes have a hard time hitting you (+1 on target number).' },
   { ancestry: GOBLIN, featureName: 'Nooks and Crannies', feature: 'As part of your move action you can take shelter behind any bit of cover. Enemies cannot attack you until your next turn.' },
   { ancestry: GOBLIN, featureName: 'Night Sight', feature: 'See twice as far in dim light' },
-  // { ancestry: XXXX, featureName: 'XXXX', feature: 'XXXXX' },
 ]
 
 const PATH_FEATURES = [
@@ -24,7 +24,8 @@ const PATH_FEATURES = [
   { heroPath: CONJURER, featureName: 'Master of Magick', feature: 'Gain mastery in one school of Sorcery' },
   { heroPath: CONJURER, featureName: 'Seeker of Sorcery', feature: 'You can cast magick from scrolls. Start the game with two random scrolls.' },
   { heroPath: CONJURER, featureName: 'Wand or Staff', feature: 'You can shoot bolts of arcane energy from your wand or staff. This is a ranged attack. Roll 1d6, deals one strike on a hit. This attack does not benefit from critical hits.' },
-  { heroPath: DELVER, featureName: 'Geared Up', feature: 'In addition to your free shop gear, you also have mountain climbing equipment, 50\' of thin strong rope, torches, a small hammer, and white chalk sticks.' },
+  // { heroPath: DELVER, featureName: 'Geared Up', feature: 'In addition to your free shop gear, you also have mountain climbing equipment, 50\' of thin strong rope, torches, a small hammer, and white chalk sticks.' },
+  { heroPath: DELVER, featureName: 'Geared Up', feature: 'You make take a unique item called the Delvers Pack. This contains any smallish mundane exploring equipment you might need.' },
   { heroPath: DELVER, featureName: 'Jack', feature: 'You may pick one additional inclination.' },
   { heroPath: FRIAR, featureName: 'Empathic Healing', feature: 'As a free action you can absorb a wound from anyone nearby. They heal one, you suffer one.' },
   { heroPath: FRIAR, featureName: 'Healing Light', feature: 'Once a day as an action you call down the holy light of your deity. Roll dice equal to the number of nearby allies. For each 4+ you roll, each ally within range heals one strike. You cannot use karma to boost this roll. Recharge this ability by spending 5 karma.' },
@@ -40,7 +41,6 @@ const PATH_FEATURES = [
   { heroPath: WARRIOR, featureName: 'Dual Weapns', feature: 'While wielding weapons in both hands, you have an extra boon while fighting in melee.' },
   { heroPath: WARDEN, featureName: 'Trailfinder', feature: 'You can follow traces left by any passing creature.' },
   { heroPath: WARDEN, featureName: 'Forager', feature: 'In the wilderness you always know how to hunt, forage, and fish for sustenance. You can feed yourself and the party while traveling.' },
-  // { heroPath: XXXX, featureName: 'XXXX', feature: 'XXXXX' },
 ]
 
 const SUBCLASS_FEATURES = [
@@ -88,7 +88,14 @@ const SUBCLASS_FEATURES = [
   { subclass: SHAPESHIFTER, featureName: 'Shapechange - Small beast', feature: 'You transform into a tiny flying beast (insect, bird, etc). This form can take 1 strike. Changing in combat requires overcoming 3 resistance dice.' },
 ]
 
-export default function CharacterFeatures({ ancestry, heroPath, subclass, inclinations }) {
+type CharacterFeaturesProps = {
+  ancestry: string,
+  heroPath: string,
+  subclass: string,
+  inclinations: Array<{ inclination: string, note: string }>
+}
+
+export default function CharacterFeatures({ ancestry, heroPath, subclass, inclinations }: CharacterFeaturesProps) {
   return (
     <div style={{ flex: 1, border: '1px solid darkGray', padding: 10, marginTop: 20 }}>
       <Typography variant="h6">

@@ -1,4 +1,4 @@
-import React, { createContext, useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 
 import { Stack, TextField } from '@mui/material'
 import Ancestry from './Ancestry'
@@ -15,56 +15,22 @@ import MiraculousSave from './MiraculousSave'
 import Armor from './Armor'
 import { LoadCharacterField, SaveCharacterField, syncCharacter } from './CharacterStore'
 import { BroadcastHandler } from './BroadcastHandler'
-import Inventory from './Inventory'
+import Inventory from './Inventory/Inventory'
 import Allies from './Allies'
-import CharacterStatContext, { useKarmaContext } from './CharacterStatContext'
-
-// --- To add ---
-// Sharing die rolls
-//   I think I need to add to a list of items (and be listening for changes)
-//   How do I prevent overwrites and data collisions? Maybe just via unique IDs?
-//   How do I keep the list of dice rolls manageable?
-// Reset character sheet
-// Change presentation of strikes
-
-// --- Done ---
-// Sharing character data
+import CharacterStatContext, { useKarmaContext, useStrikesContext } from './CharacterStatContext'
+import { Boon, Inclination } from './GameTypes'
 
 export default function Character() {
   const [name, setName] = useState('')
   const [heroPath, setHeroPath] = useState('')
   const [subclass, setSubclass] = useState('')
-  const [ancestry, setAncestry] = useState(null)
-  const [inclinations, setInclinations] = useState([])
-  const [boons, setBoons] = useState([])
-  const [strikes, setStrikes] = useState(3)
+  const [ancestry, setAncestry] = useState<string>('')
+  const [inclinations, setInclinations] = useState<Array<Inclination>>([])
+  const [boons, setBoons] = useState<Array<Boon>>([])
   const [inventory, setInventory] = useState('')
 
   const { karma } = useKarmaContext()
-
-  const handleName = (ev) => {
-    const newName = ev.target.value
-    setName(newName)
-    if (newName) {
-      SaveCharacterField('name', newName)
-    }
-  }
-
-  const handleAncestry = (ancestry) => setAncestry(ancestry)
-
-  const handleHeroPath = (hp, sc) => {
-    setHeroPath(hp)
-    if (hp) {
-      SaveCharacterField('heroPath', hp)
-    }
-
-    setSubclass(sc)
-    if (sc) {
-      SaveCharacterField('subclass', sc)
-    }
-  }
-
-  const handleInclinations = (inclinations) => setInclinations(inclinations)
+  const { strikes } = useStrikesContext()
 
   useEffect(() => setName(LoadCharacterField('name') || ''), [])
 
@@ -78,13 +44,41 @@ export default function Character() {
     doSync()
   }, [name, ancestry, heroPath, subclass, inclinations, strikes, karma, inventory])
 
+  const handleName = (ev: React.ChangeEvent<HTMLInputElement>) => {
+    const newName = ev.target.value
+    setName(newName)
+    if (newName) {
+      SaveCharacterField('name', newName)
+    }
+  }
+
+  const handleAncestry = (_ancestry: string) => {
+    setAncestry(_ancestry)
+  }
+
+  const handleHeroPath = (hp: string, sc?: string) => {
+    setHeroPath(hp)
+    if (hp) {
+      SaveCharacterField('heroPath', hp)
+    }
+
+    if (sc === undefined) {
+      setSubclass('')
+    } else {
+      setSubclass(sc)
+      SaveCharacterField('subclass', sc)
+    }
+  }
+
+  const handleInclinations = (_inclinations: Array<Inclination>) => setInclinations(_inclinations)
+
   return (
     <CharacterStatContext>
       <div style={{display: 'flex', marginTop: 10, flexDirection: 'column', width: 680 }}>
         <Stack direction="row">
           <TextField sx={{ flex: 5 }} label="Name" value={name} onChange={handleName} />
-          <Spacer/>
-          <Roller boons={boons} />
+          <Spacer />
+          <Roller boons={boons} karma={0} onSpendKarma={() => null}/>
         </Stack>
 
         <Stack direction="row"
@@ -99,7 +93,7 @@ export default function Character() {
         <Inclinations ancestry={ancestry} heroPath={heroPath} onChange={handleInclinations} />
 
         <Stack direction="row" style={{ display: 'flex', justifyContent: 'space-between', marginTop: 20 }}>
-          <Health heroPath={heroPath} strikes={strikes} onChangeStrikes={setStrikes} />
+          <Health heroPath={heroPath} />
           <Karma />
           <HeroDie inclinations={inclinations} />
           <Armor heroPath={heroPath} inventory={inventory} />

@@ -1,7 +1,4 @@
-import React from 'react'
-
 import { Typography } from '@mui/material'
-import { AddCircle, LooksOneTwoTone, LooksTwoTwoTone, Looks3TwoTone, Looks4TwoTone, Looks5TwoTone, Looks6TwoTone, RemoveCircle } from '@mui/icons-material'
 import { D1, D6 } from './Rules'
 
 export default function MagicRules() {

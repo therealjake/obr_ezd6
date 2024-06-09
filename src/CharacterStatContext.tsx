@@ -34,7 +34,7 @@ export default function CharacterStatContext({ children }: { children: React.Rea
     console.log('Strikes updated, saving to local storage')
     SaveCharacterField('strikes', strikes)
   }, [strikes])
-  
+
   return (
     <KarmaCtx.Provider value={{ karma, setKarma }}>
       <StrikesCtx.Provider value={{ strikes, setStrikes }}>

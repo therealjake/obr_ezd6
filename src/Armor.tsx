@@ -1,5 +1,5 @@
-import { Box, Stack, TextField, Typography } from '@mui/material'
 import React from 'react'
+import { Box, TextField, Typography } from '@mui/material'
 import { BEASTMASTER, DELVER, FRIAR, RASCAL, SKALD, WARDEN, WARRIOR } from './HeroPath'
 import SaveRoller from './SaveRoller'
 
@@ -7,7 +7,12 @@ const LIGHT = 'Light'
 const MEDIUM = 'Medium'
 const HEAVY = 'Heavy'
 
-export default function Armor({ heroPath, inventory }) {
+type ArmorProps = {
+  heroPath: string,
+  inventory: string,
+}
+
+export default function Armor({ heroPath, inventory }: ArmorProps) {
   let type = LIGHT
 
   if (heroPath === DELVER || heroPath === WARDEN || heroPath === FRIAR || heroPath === SKALD || heroPath === BEASTMASTER) {

@@ -60,10 +60,10 @@ function SaveRollChain(
     <Stack direction="column" alignItems="center" sx={{ width: '33%' }}>
       <Typography variant="caption">Damage</Typography>
       { allRolls.map((r, rollIdx) => (
-        <>
-          <Die key={rollIdx} roll={r.roll + (rollIdx === 0 ? karmaSpent : 0)} />
+        <Stack key={rollIdx}>
+          <Die roll={r.roll + (rollIdx === 0 ? karmaSpent : 0)} />
           {r.reroll && <Typography variant="caption" sx={{ mb: 1 }}>(reroll)</Typography>}
-        </>
+        </Stack>
       ))}
 
       { allRolls[0].roll + karmaSpent >= saveTarget ? (
@@ -102,8 +102,6 @@ type RollSet = {
   heroDiceSpent: boolean,
   damageAccepted: boolean,
 }
-
-const rr: RollSet = { index: 0, rolls: [], reroll: [], karmaSpent: 0, heroDiceSpent: false, damageAccepted: false }
 
 export default function SaveRoller({ saveTarget, saveWithAdvantage }: SaveRollerProps) {
   const [open, setOpen] = useState(false)
@@ -183,6 +181,11 @@ export default function SaveRoller({ saveTarget, saveWithAdvantage }: SaveRoller
         rs.rolls.push(rollDie())
         rs.reroll.push(rollDie())
       }
+
+      rs.rolls.sort((r1, r2) => r2 - r1)
+      rs.reroll.sort((r1, r2) => r2 - r1)
+
+
       _rollSets.push(rs)
     }
     setRolls(_rollSets)
@@ -196,11 +199,13 @@ export default function SaveRoller({ saveTarget, saveWithAdvantage }: SaveRoller
     for (const rs of rolls) {
       const bestRollWithKarma = (rs.rolls[0] + rs.karmaSpent)
       const bestRerollWithKarma = rs.heroDiceSpent ? (rs.reroll[0] + rs.karmaSpent) : 0
-      const hasMetTarget = bestRollWithKarma >= saveTarget || bestRerollWithKarma >= saveTarget
+      const hasMetTarget = bestRollWithKarma >= saveTarget || (rs.heroDiceSpent && bestRerollWithKarma >= saveTarget)
+
       if (!rs.damageAccepted && !hasMetTarget) {
         return false
       }
     }
+
     return true
   }
 
@@ -283,9 +288,9 @@ export default function SaveRoller({ saveTarget, saveWithAdvantage }: SaveRoller
             <Divider flexItem sx={{ mt: 3, mb: 3}} />
 
             <Stack direction="row" sx={{ width: '100%', justifyContent: 'space-around' }}>
+              <Typography>Strikes Left: {strikes - totalWoundsTaken}</Typography>
               <Typography>Karma Left: {karmaLeft}</Typography>
               <Typography>Hero Dice Left: {heroDiceLeft}</Typography>
-              <Typography>Strikes Left: {strikes - totalWoundsTaken}</Typography>
             </Stack>
 
             {strikes - totalWoundsTaken < 1 && (

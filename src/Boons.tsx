@@ -2,8 +2,9 @@ import React, { useEffect, useState } from 'react'
 import { BEASTMASTER, BRUTE, CONJURER, DELVER, FRIAR, RASCAL, SKALD, WARDEN, WARRIOR } from './HeroPath'
 import { Chip, Typography } from '@mui/material'
 import { DWARF, ELF } from './Ancestry'
+import { Boon, Inclination } from './GameTypes'
 
-const BOON_TYPES = [
+const BOON_TYPES: Array<Boon> = [
   { source: BEASTMASTER, label: 'Melee OR Ranged tasks' },
   { source: BEASTMASTER, label: 'Beast empathy' },
   { source: SKALD, label: 'Performance tasks' },
@@ -25,24 +26,34 @@ const BOON_TYPES = [
   { source: DWARF, label: 'Resist poison' },
 ]
 
-export function BoonChip({ boonObj, compact }) {
-  let label = boonObj.label || boonObj.inclination
+type BoonChipProps = {
+  boonObj: Boon,
+  compact?: boolean,
+}
 
-  if (boonObj.source) { label += ` (${boonObj.source})` }
-  if (boonObj.inclination) { label += ` (${boonObj.inclination})` }
+export function BoonChip({ boonObj, compact }: BoonChipProps) {
+  const label = `${boonObj.label} (${boonObj.source})`
 
   return <Chip label={label} style={{ margin: compact ? 2 : 10 }} />
 }
 
-export default function Boons({ ancestry, heroPath, inclinations, onCalculate }) {
-  const [boons, setBoons] = useState([])
+type BoonsProps = {
+  ancestry: string,
+  heroPath: string,
+  inclinations: Array<Inclination>,
+  onCalculate: (boons: Array<Boon>) => void,
+}
+
+export default function Boons({ ancestry, heroPath, inclinations, onCalculate }: BoonsProps) {
+  const [boons, setBoons] = useState<Array<Boon>>([])
 
   const recalculate = () => {
-    const newBoons = []
+    const newBoons: Array<Boon> = []
 
     BOON_TYPES.filter(bt => bt.source === ancestry).forEach(bt => newBoons.push(bt))
     BOON_TYPES.filter(bt => bt.source === heroPath).forEach(bt => newBoons.push(bt))
-    inclinations.filter(it => it.boon).forEach(it => newBoons.push(it))
+    // TODO: Does this work as written?
+    inclinations.filter(it => it.boonLabel).forEach((it: Inclination) => newBoons.push({ source: it.inclination, label: it.boonLabel || '' }))
 
     setBoons(newBoons)
     onCalculate(newBoons)
@@ -54,7 +65,7 @@ export default function Boons({ ancestry, heroPath, inclinations, onCalculate })
     <div style={{ flex: 1, border: '1px solid darkGray', marginTop: 20, padding: 10 }}>
       <Typography variant="h6">Boons</Typography>
       <div style={{ marginTop: 0 }}>
-        { boons.map(bt => <BoonChip key={bt.label || bt.inclination} boonObj={bt}/>) }
+        { boons.map(bt => <BoonChip key={bt.label} boonObj={bt}/>) }
         { boons.length === 0 && <span>No boons yet. Boons come from Ancestry, Hero Path, and Inclinations</span> }
       </div>
     </div>

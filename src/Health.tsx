@@ -1,10 +1,15 @@
-import { React } from 'react'
 import { BRUTE } from './HeroPath'
 import { Stack, Typography } from '@mui/material'
 import { CircleOutlined, HideSourceOutlined } from '@mui/icons-material'
 import { useStrikesContext } from './CharacterStatContext'
 
-function Strike({ isChecked, onIncrement, onDecrement }) {
+type StrikeProps = {
+  isChecked: boolean,
+  onIncrement: () => void,
+  onDecrement: () => void,
+}
+
+export function Strike({ isChecked, onIncrement, onDecrement }: StrikeProps) {
   if (isChecked) {
     return <HideSourceOutlined onClick={onDecrement} />
   } else {
@@ -12,7 +17,11 @@ function Strike({ isChecked, onIncrement, onDecrement }) {
   }
 }
 
-export default function Health({ heroPath }) {
+type HealthProps = {
+  heroPath: string,
+}
+
+export default function Health({ heroPath }: HealthProps) {
   const { strikes, setStrikes } = useStrikesContext()
 
   let maxHealth = 3
@@ -21,23 +30,12 @@ export default function Health({ heroPath }) {
     maxHealth = 5
   }
 
-  // useEffect(() => {
-  //   const _h = LoadCharacterField('health')
-  //   onChangeStrikes(LoadCharacterField('health'))
-  // }, [])
-
   const damage = () => {
     setStrikes(Math.max(0, strikes - 1))
-    // const _h = Math.max(0, strikes - 1)
-    // onChangeStrikes(_h)
-    // SaveCharacterField('health', _h)
   }
 
   const heal = () => {
     setStrikes(Math.min(maxHealth, strikes + 1))
-    // const _h = Math.min(maxHealth, strikes + 1)
-    // onChangeStrikes(_h)
-    // SaveCharacterField('health', _h)
   }
 
   return (

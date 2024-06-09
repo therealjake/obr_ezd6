@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { FormControl, Grid, InputLabel, MenuItem, Select, Stack } from '@mui/material'
+import { FormControl, Grid, InputLabel, MenuItem, Select, SelectChangeEvent, Stack } from '@mui/material'
 import { LoadCharacterField, SaveCharacterField } from './CharacterStore'
 
 export const HUMAN = 'Human'
@@ -16,17 +16,19 @@ const ancestries = [
   { type: GOBLIN, note: 'Whenever you move without attacking, you can jump behind the smallest cover, avoiding being attacked for a turn. As a nocturnal creature you also see twice as far in dim light' },
 ]
 
-export default function Ancestry({ onChange }) {
+export type AncestryProps = { onChange: (ancestry: string) => void }
+
+export default function Ancestry({ onChange }: AncestryProps) {
   const [ancestry, setAncestry] = useState('')
 
-  useEffect(() => onChange(ancestry), [ancestry, onChange])
+  useEffect(() => onChange(ancestry), [ancestry])
 
   useEffect(() => {
     const _ancestry = LoadCharacterField('ancestry')
     setAncestry(_ancestry || '')
   }, [])
 
-  const handleAncestry = (ev) => {
+  const handleAncestry = (ev: SelectChangeEvent<string>) => {
     const _a = ev.target.value
     setAncestry(_a)
     if (_a) {
@@ -53,7 +55,7 @@ export default function Ancestry({ onChange }) {
                   </Grid>
 
                   <Grid item xs={1}></Grid>
-                  <Grid item xs={11} style={{ textWrap: 'wrap' }}>
+                  <Grid item xs={11} sx={{ textWrap: 'wrap' }}>
                     {a.note}
                   </Grid>
                 </Grid>
@@ -63,7 +65,7 @@ export default function Ancestry({ onChange }) {
         </Select>
       </FormControl>
 
-      <div style={{ flex: 1, marginTop: 10, marginBottom: 10 }}>
+      <div style={{ flex: 1, marginTop: 10, marginBottom: 20 }}>
         { (ancestries.find(a => a.type === ancestry) || {}).note }
       </div>
     </Stack>
