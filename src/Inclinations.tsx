@@ -97,7 +97,7 @@ export default function Inclinations({ ancestry, heroPath, onChange }: Inclinati
   useEffect(() => {
     const inclinationObjects = INCLINATION_TYPES.filter(it => inclinations.includes(it.inclination))
     onChange(inclinationObjects)
-  }, [inclinations, onChange])
+  }, [inclinations])
 
   useEffect(() => {
     const _i = LoadCharacterField('inclinations')

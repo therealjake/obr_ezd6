@@ -21,7 +21,7 @@ export type AncestryProps = { onChange: (ancestry: string) => void }
 export default function Ancestry({ onChange }: AncestryProps) {
   const [ancestry, setAncestry] = useState('')
 
-  useEffect(() => onChange(ancestry), [ancestry, onChange])
+  useEffect(() => onChange(ancestry), [ancestry])
 
   useEffect(() => {
     const _ancestry = LoadCharacterField('ancestry')

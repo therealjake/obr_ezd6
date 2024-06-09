@@ -43,15 +43,31 @@ export default function Character() {
   const { karma } = useKarmaContext()
   const { strikes } = useStrikesContext()
 
+  useEffect(() => setName(LoadCharacterField('name') || ''), [])
+
+  // TODO: Extract syncing-to-owlbear elsewhere
+  useEffect(() => {
+    const doSync = async () => {
+      syncCharacter({ name, ancestry, heroPath, subclass, inclinations, karma, strikes, inventory })
+      BroadcastHandler.notifyOfCharacterUpdate()
+    }
+
+    doSync()
+  }, [])
+  // }, [name, ancestry, heroPath, subclass, inclinations, strikes, karma, inventory])
+
   const handleName = (ev: React.ChangeEvent<HTMLInputElement>) => {
     const newName = ev.target.value
     setName(newName)
     if (newName) {
       SaveCharacterField('name', newName)
     }
+    console.log('name change')
   }
 
-  const handleAncestry = (ancestry: string) => setAncestry(ancestry)
+  const handleAncestry = (_ancestry: string) => {
+    setAncestry(ancestry)
+  }
 
   const handleHeroPath = (hp: string, sc?: string) => {
     setHeroPath(hp)
@@ -65,21 +81,12 @@ export default function Character() {
       setSubclass(sc)
       SaveCharacterField('subclass', sc)
     }
+    console.log('hero path change')
   }
 
   const handleInclinations = (inclinations: Array<Inclination>) => setInclinations(inclinations)
 
-  useEffect(() => setName(LoadCharacterField('name') || ''), [])
-
-  // TODO: Extract syncing-to-owlbear elsewhere
-  useEffect(() => {
-    const doSync = async () => {
-      syncCharacter({ name, ancestry, heroPath, subclass, inclinations, karma, strikes, inventory })
-      BroadcastHandler.notifyOfCharacterUpdate()
-    }
-
-    doSync()
-  }, [name, ancestry, heroPath, subclass, inclinations, strikes, karma, inventory])
+  console.log('Rendering character sheet')
 
   return (
     <CharacterStatContext>

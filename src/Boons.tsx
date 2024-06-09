@@ -59,7 +59,7 @@ export default function Boons({ ancestry, heroPath, inclinations, onCalculate }:
     onCalculate(newBoons)
   }
 
-  useEffect(recalculate, [ancestry, heroPath, inclinations, onCalculate])
+  useEffect(recalculate, [ancestry, heroPath, inclinations])
 
   return (
     <div style={{ flex: 1, border: '1px solid darkGray', marginTop: 20, padding: 10 }}>
