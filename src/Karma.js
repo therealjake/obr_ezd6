@@ -1,7 +1,7 @@
-import { React, useEffect } from 'react'
-import { Box, IconButton, Stack, TextField, Typography } from '@mui/material'
-import { AddCircle, CircleOutlined, HideSourceOutlined, RemoveCircle } from '@mui/icons-material'
-import { LoadCharacterField, SaveCharacterField } from './CharacterStore'
+import React from 'react'
+import { Stack, Typography } from '@mui/material'
+import { CircleOutlined, HideSourceOutlined } from '@mui/icons-material'
+import { useKarmaContext } from './CharacterStatContext'
 
 function Point({ isChecked, onIncrement, onDecrement }) {
   if (isChecked) {
@@ -11,16 +11,11 @@ function Point({ isChecked, onIncrement, onDecrement }) {
   }
 }
 
-export default function Karma({ karma, onChangeKarma }) {
-  useEffect(() => updateKarma(Number(LoadCharacterField('karma'))), [])
+export default function Karma() {
+  const { karma, setKarma } = useKarmaContext()
 
-  const lose = () => updateKarma(Math.max(0, karma - 1))
-  const gain = () => updateKarma(karma + 1)
-
-  const updateKarma = (k) => {
-    onChangeKarma(k)
-    SaveCharacterField('karma', k)
-  }
+  const lose = () => setKarma(Math.max(0, karma - 1))
+  const gain = () => setKarma(karma + 1)
 
   return (
     <div style={{ flex: 1, border: '1px solid darkGray', padding: 10, borderRadius: 4 }}>

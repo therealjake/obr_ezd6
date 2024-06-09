@@ -1,34 +1,22 @@
-import { React, useEffect, useState } from 'react'
+import { React } from 'react'
 import { Checkbox, Stack, ToggleButton, Typography } from '@mui/material'
 import { ViewInAr } from '@mui/icons-material'
 import Spacer from './Spacer'
 import { FATE_TOUCHED } from './Inclinations'
-import { LoadCharacterField, SaveCharacterField } from './CharacterStore'
+import { useHeroDiceContext } from './CharacterStatContext'
 
 export default function HeroDie({ inclinations }) {
-  const [firstDie, setFirstDie] = useState(true)
-
+  const { heroDice, setHeroDice } = useHeroDiceContext()
   const showSecondDie = inclinations.some(bt => bt.inclination === FATE_TOUCHED)
-  const [secondDie, setSecondDie] = useState(true)
 
-  useEffect(() => {
-    const _fd = LoadCharacterField('firstDie')
-    setFirstDie(_fd === 'true')
+  const toggleDie = (ev) => {
+    const wasChecked = !ev.target.checked
 
-    const _sd = LoadCharacterField('secondDie')
-    setSecondDie(_sd === 'true')
-  }, [])
-
-  const toggleFirstDie = () => {
-    const _d = !firstDie
-    setFirstDie(_d)
-    SaveCharacterField('firstDie', _d ? 'true' : 'false')
-  }
-
-  const toggleSecondDie = () => {
-    const _d = !secondDie
-    setSecondDie(_d)
-    SaveCharacterField('secondDie', _d ? 'true' : 'false')
+    if (wasChecked) {
+      setHeroDice(Math.max(0, heroDice - 1))
+    } else {
+      setHeroDice(Math.min(2, heroDice + 1))
+    }
   }
 
   return (
@@ -45,18 +33,18 @@ export default function HeroDie({ inclinations }) {
             marginTop: 0,
           }}
         >
-          <ToggleButton value={firstDie} onChange={toggleFirstDie} size="small">
+          <ToggleButton value={heroDice > 0} onChange={toggleDie} size="small">
             <ViewInAr/>
-            <Checkbox checked={firstDie}/>
+            <Checkbox checked={heroDice > 0}/>
           </ToggleButton>
 
           {
             showSecondDie && (
               <>
                 <Spacer/>
-                <ToggleButton value={secondDie} onChange={toggleSecondDie} size="small">
+                <ToggleButton value={heroDice > 1} onChange={toggleDie} size="small">
                   <ViewInAr/>
-                  <Checkbox checked={secondDie}/>
+                  <Checkbox checked={heroDice > 1}/>
                 </ToggleButton>
               </>
             )
