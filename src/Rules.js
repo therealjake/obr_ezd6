@@ -1,7 +1,7 @@
 import React from 'react'
 
 import { Button, Typography } from '@mui/material'
-import { AddCircle, LooksOneTwoTone, LooksTwoTwoTone, Looks3TwoTone, Looks4TwoTone, Looks5TwoTone, Looks6TwoTone, RemoveCircle } from '@mui/icons-material'
+import { LooksOneTwoTone, LooksTwoTwoTone, Looks3TwoTone, Looks4TwoTone, Looks5TwoTone, Looks6TwoTone } from '@mui/icons-material'
 
 export function D1({ size }) {
   const ss = size ? Number(size) : 20

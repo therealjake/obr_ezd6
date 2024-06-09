@@ -6,13 +6,13 @@ import OBR from '@owlbear-rodeo/sdk'
 export default function DieLog() {
   const [log, setLog] = useState([])
 
-  const onEvent = (event) => {
-    const newLogs = [...log]
-    newLogs.unshift(reformat(event))
-    setLog(newLogs)
-  }
-
   useEffect(() => {
+    const onEvent = (event) => {
+      const newLogs = [...log]
+      newLogs.unshift(reformat(event))
+      setLog(newLogs)
+    }
+
     OBR.onReady(() => {
       OBR.broadcast.onMessage('obr_ezd6.rolls', onEvent)
     })

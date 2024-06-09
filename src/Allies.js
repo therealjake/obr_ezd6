@@ -1,5 +1,5 @@
 import { Cancel } from '@mui/icons-material'
-import { Button, Checkbox, FormLabel, Grid, IconButton, Stack, TextField, Typography } from '@mui/material'
+import { Button, Checkbox, IconButton, Stack, TextField, Typography } from '@mui/material'
 import React, { useEffect, useState } from 'react'
 import Inventory from './Inventory'
 import { LoadCharacterField, SaveCharacterField } from './CharacterStore'

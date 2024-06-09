@@ -54,7 +54,7 @@ export default function HeroPath({ onChange }) {
   const [path, setPath] = useState('')
   const [school, setSchool] = useState('')
 
-  useEffect(() => onChange(path, school), [path, school])
+  useEffect(() => onChange(path, school), [path, school, onChange])
 
   const handlePath = (ev) => {
     const _p = ev.target.value

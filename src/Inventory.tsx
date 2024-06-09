@@ -12,10 +12,18 @@ type InventoryProps = {
 }
 
 export default function Inventory({ characterName, heroPath, inclinations, onInventoryChange }: InventoryProps) {
-  const maxWeight = (heroPath === WARRIOR || heroPath === BRUTE) ? 12 : 8
-
   const [weight, setWeight] = useState([0, 0, 0, 0, 0, 0, 0, 0, 0, 0])
   const [itemNames, setItemNames] = useState<Array<string | null>>([])
+
+  const maxWeight = (heroPath === WARRIOR || heroPath === BRUTE) ? 12 : 8
+  const totalWeight = weight.reduce((acc, h) => Number(acc) + Number(h), 0)
+
+  useEffect(() => {
+    const formatted = itemNames.filter(v => !!v).join(', ') + `      (Encumberance: ${totalWeight} / ${maxWeight})`
+    if (onInventoryChange) {
+      onInventoryChange(formatted)
+    }
+  }, [itemNames, onInventoryChange, totalWeight, maxWeight])
 
   const selectItem = (idx: number, item: Item | null, note: string | null) => {
     const newH = [...weight]
@@ -39,15 +47,6 @@ export default function Inventory({ characterName, heroPath, inclinations, onInv
       setItemNames(newN)
     }
   }
-
-  const totalWeight = weight.reduce((acc, h) => Number(acc) + Number(h), 0)
-
-  useEffect(() => {
-    const formatted = itemNames.filter(v => !!v).join(', ') + `      (Encumberance: ${totalWeight} / ${maxWeight})`
-    if (onInventoryChange) {
-      onInventoryChange(formatted)
-    }
-  }, [itemNames, onInventoryChange])
 
   return (
     <div style={{ flex: 1, border: '1px solid darkGray', marginTop: 20, padding: 10 }}>

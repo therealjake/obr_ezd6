@@ -103,8 +103,6 @@ type RollSet = {
   damageAccepted: boolean,
 }
 
-const rr: RollSet = { index: 0, rolls: [], reroll: [], karmaSpent: 0, heroDiceSpent: false, damageAccepted: false }
-
 export default function SaveRoller({ saveTarget, saveWithAdvantage }: SaveRollerProps) {
   const [open, setOpen] = useState(false)
   const [dmgCount, setDmgCount] = useState(1)

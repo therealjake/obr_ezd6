@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import OBR from '@owlbear-rodeo/sdk'
 import { Button, List, Stack, Typography } from '@mui/material'
-import { BroadcastHandler, CHARACTER_UPDATE_CHANNEL } from './BroadcastHandler'
+import { BroadcastHandler } from './BroadcastHandler'
 import DieLog from './DieLog'
 
 export default function GmScreen() {
@@ -17,7 +17,6 @@ export default function GmScreen() {
 
         for (const p of players) {
           if (p) {
-            const name = p.name
             const md = p.metadata
 
             const character = md['com.snak.obr_ezd6/character']
