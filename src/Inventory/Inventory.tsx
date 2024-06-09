@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react'
 import { Grid, Typography } from '@mui/material'
 import ItemSlot from './ItemSlot'
-import { Inclination, Item } from './GameTypes'
-import { BRUTE, WARRIOR } from './HeroPath'
+import { Inclination, Item } from '../GameTypes'
+import { BRUTE, WARRIOR } from '../HeroPath'
 
 type InventoryProps = {
   characterName: string,

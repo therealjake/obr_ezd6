@@ -1,4 +1,4 @@
-import { Item } from "./GameTypes"
+import { Item } from "../GameTypes"
 
 export const ITEMS: Array<Item> = [
   { label: '', qty: 0 },

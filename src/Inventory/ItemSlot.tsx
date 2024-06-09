@@ -1,83 +1,14 @@
-import { Cancel, CircleOutlined, HideSourceOutlined } from '@mui/icons-material'
-import { Autocomplete, AutocompleteValue, Grid, IconButton, Stack, TextField, Typography } from '@mui/material'
 import React, { useEffect, useState } from 'react'
-import { CHIRURGEON, LOCKPICKING } from './Inclinations'
-import { DELVER } from './HeroPath'
-import { LoadCharacterField, SaveCharacterField, WipeCharacterField } from './CharacterStore'
-import { Inclination, Item } from './GameTypes'
+
+import { Autocomplete, AutocompleteValue, Grid, IconButton, Stack, TextField } from '@mui/material'
+import { Cancel } from '@mui/icons-material'
+import { CHIRURGEON, LOCKPICKING } from '../Inclinations'
+import { DELVER } from '../HeroPath'
+import { LoadCharacterField, SaveCharacterField, WipeCharacterField } from '../CharacterStore'
+import { Inclination, Item } from '../GameTypes'
 import { ITEMS } from './GearList'
-
-type SubSlotProps = {
-  onIncrement: () => void,
-  onDecrement: () => void,
-  startExpended: boolean,
-}
-function SubSlot({ onIncrement, onDecrement, startExpended }: SubSlotProps) {
-  const [expended, setExpended] = useState(startExpended)
-
-  const expend = () => {
-    setExpended(true)
-    onIncrement()
-  }
-
-  const unexpend = () => {
-    setExpended(false)
-    onDecrement()
-  }
-
-  if (expended) {
-    return <HideSourceOutlined onClick={() => unexpend()} />
-  } else {
-    return <CircleOutlined onClick={() => expend()} />
-  }
-}
-
-type CoinbagProps = {
-  onClear: () => void,
-  copper: number,
-  setCopper: (copper: number) => void,
-  silver: number,
-  setSilver: (silver: number) => void,
-  gold: number,
-  setGold: (gold: number) => void,
-}
-
-function Coinbag({ onClear, copper, setCopper, silver, setSilver, gold, setGold }: CoinbagProps) {
-  return (
-    <Grid item xs={6}>
-      <Stack direction="row" sx={{ mt: 2, ml: 1, mr: 1, alignItems: 'center' }}>
-
-      <TextField label="Copper"
-                    variant="outlined"
-                    fullWidth
-                    value={copper}
-                    onChange={(ev: React.ChangeEvent<HTMLInputElement>) => setCopper(Number(ev.target.value))}
-                    type="number"
-                    style={{ marginRight: 5}}
-        />
-        <TextField label="Silver"
-                    variant="outlined"
-                    fullWidth
-                    value={silver}
-                    onChange={(ev: React.ChangeEvent<HTMLInputElement>) => setSilver(Number(ev.target.value))}
-                    type="number"
-                    style={{ marginRight: 5}}
-        />
-        <TextField label="Gold"
-                    variant="outlined"
-                    fullWidth
-                    value={gold}
-                    onChange={(ev: React.ChangeEvent<HTMLInputElement>) => setGold(Number(ev.target.value))}
-                    type="number"
-                    style={{ marginRight: 5}}
-        />
-
-        <IconButton onClick={onClear}><Cancel /></IconButton>
-      </Stack>
-      { (Number(copper) + Number(silver) + Number(gold)) > 2000 && <Typography sx={{ ml: 1, mt: 1 }} variant="caption" color="error">Bags can only hold 2,000 coins</Typography>}
-    </Grid>
-  )
-}
+import Coinbag from './Coinbag'
+import SubSlot from './SubSlot'
 
 type ItemSlotProps = {
   characterName: string,
