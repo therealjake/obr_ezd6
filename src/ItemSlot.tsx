@@ -1,65 +1,18 @@
-import { AddCircle, Cancel, CircleOutlined, HideSourceOutlined, Save } from '@mui/icons-material'
-import { Autocomplete, Grid, IconButton, MenuItem, Select, Stack, TextField, Typography } from '@mui/material'
+import { Cancel, CircleOutlined, HideSourceOutlined } from '@mui/icons-material'
+import { Autocomplete, AutocompleteValue, Grid, IconButton, Stack, TextField, Typography } from '@mui/material'
 import React, { useEffect, useState } from 'react'
-import Inclinations, { CHIRURGEON, LOCKPICKING } from './Inclinations'
+import { CHIRURGEON, LOCKPICKING } from './Inclinations'
 import { DELVER } from './HeroPath'
 import { LoadCharacterField, SaveCharacterField, WipeCharacterField } from './CharacterStore'
+import { Inclination, Item } from './GameTypes'
+import { ITEMS } from './GearList'
 
-const items = [
-  { label: '' },
-
-  // Specialty Gear
-  { label: 'Delvers Pack (bulky)', qty: 1, large: true },
-  { label: 'Healing Kit (6)', qty: 6 },
-  { label: 'Lockpicks (3)', qty: 3 },
-
-  // Random Gear
-  { label: '10\' Pole (bulky)', qty: 1, large: true, },
-  { label: 'Chalk sticks', qty: 1 },
-  { label: 'Chisel', qty: 1 },
-  { label: 'Coinbag', qty: 1, note: true, },
-  { label: 'Crowbar', qty: 1 },
-  { label: 'Grappling hook', qty: 1 },
-  { label: 'Horn', qty: 1 },
-  { label: 'Hunting Knife', qty: 1, },
-  { label: 'Lantern', qty: 1, },
-  { label: 'Metal spikes', qty: 1, },
-  { label: 'Nails', qty: 1 },
-  { label: 'Oil flask (2)', qty: 2 },
-  { label: 'Other Item', qty: 1, note: true },
-  { label: 'Padlock and key', qty: 1 },
-  { label: 'Pot of grease', qty: 1 },
-  { label: 'Potion', qty: 1, note: true },
-  { label: 'Rations (4)', qty: 4, },
-  { label: 'Rope (50\')', qty: 1, },
-  { label: 'Scroll', qty: 1, note: true },
-  { label: 'Small hammer', qty: 1 },
-  { label: 'Torches (2)', qty: 2, },
-  { label: 'Waterskin', qty: 1 },
-  { label: 'Whistle', qty: 1 },
-
-  // Weapons
-  { label: 'Axe', qty: 1,  },
-  { label: 'Crossbow (bulky)', qty: 1, large: true,  },
-  { label: 'Dagger', qty: 1 },
-  { label: 'Hammer', qty: 1 },
-  { label: 'Long Bow (bulky)', qty: 1, large: true },
-  { label: 'Long Sword', qty: 1,  },
-  { label: 'Mace', qty: 1 },
-  { label: 'Short Bow (bulky)', qty: 1, large: true,  },
-  { label: 'Short Sword', qty: 1, },
-  { label: 'Spear (bulky)', qty: 1, large: true,  },
-  { label: 'Staff', qty: 1 },
-  { label: 'Two-handed Sword (bulky)', qty: 1, large: true },
-
-  // Armor
-  { label: 'Leather Armor', qty: 1, },
-  { label: 'Chainmail', qty: 1, large: false, },
-  { label: 'Plate Armor (bulky)', qty: 1, large: true, },
-  { label: 'Shield', qty: 1, },
-]
-
-function SubSlot({ onIncrement, onDecrement, startExpended }) {
+type SubSlotProps = {
+  onIncrement: () => void,
+  onDecrement: () => void,
+  startExpended: boolean,
+}
+function SubSlot({ onIncrement, onDecrement, startExpended }: SubSlotProps) {
   const [expended, setExpended] = useState(startExpended)
 
   const expend = () => {
@@ -79,7 +32,17 @@ function SubSlot({ onIncrement, onDecrement, startExpended }) {
   }
 }
 
-function Coinbag({ onClear, copper, setCopper, silver, setSilver, gold, setGold }) {
+type CoinbagProps = {
+  onClear: () => void,
+  copper: number,
+  setCopper: (copper: number) => void,
+  silver: number,
+  setSilver: (silver: number) => void,
+  gold: number,
+  setGold: (gold: number) => void,
+}
+
+function Coinbag({ onClear, copper, setCopper, silver, setSilver, gold, setGold }: CoinbagProps) {
   return (
     <Grid item xs={6}>
       <Stack direction="row" sx={{ mt: 2, ml: 1, mr: 1, alignItems: 'center' }}>
@@ -88,7 +51,7 @@ function Coinbag({ onClear, copper, setCopper, silver, setSilver, gold, setGold 
                     variant="outlined"
                     fullWidth
                     value={copper}
-                    onChange={(ev) => setCopper(ev.target.value)}
+                    onChange={(ev: React.ChangeEvent<HTMLInputElement>) => setCopper(Number(ev.target.value))}
                     type="number"
                     style={{ marginRight: 5}}
         />
@@ -96,7 +59,7 @@ function Coinbag({ onClear, copper, setCopper, silver, setSilver, gold, setGold 
                     variant="outlined"
                     fullWidth
                     value={silver}
-                    onChange={(ev) => setSilver(ev.target.value)}
+                    onChange={(ev: React.ChangeEvent<HTMLInputElement>) => setSilver(Number(ev.target.value))}
                     type="number"
                     style={{ marginRight: 5}}
         />
@@ -104,7 +67,7 @@ function Coinbag({ onClear, copper, setCopper, silver, setSilver, gold, setGold 
                     variant="outlined"
                     fullWidth
                     value={gold}
-                    onChange={(ev) => setGold(ev.target.value)}
+                    onChange={(ev: React.ChangeEvent<HTMLInputElement>) => setGold(Number(ev.target.value))}
                     type="number"
                     style={{ marginRight: 5}}
         />
@@ -116,8 +79,19 @@ function Coinbag({ onClear, copper, setCopper, silver, setSilver, gold, setGold 
   )
 }
 
-export default function ItemSlot({ characterName, idx, heroPath, inclinations, weightArray, itemNameArray, onPick }) {
-  const [item, setItem] = useState(null)
+type ItemSlotProps = {
+  characterName: string,
+  idx: number,
+  heroPath: string,
+  inclinations: Array<Inclination>,
+  weightArray: Array<number>,
+  itemNameArray: Array<string | null>,
+  onPick: (item: Item | null, note: string | null) => void,
+}
+
+export default function ItemSlot({ characterName, idx, heroPath, inclinations, weightArray, itemNameArray, onPick }: ItemSlotProps) {
+  const [loaded, setLoaded] = useState(false)
+  const [item, setItem] = useState<Item | null>(null)
   const [note, setNote] = useState('')
   const [expendedCount, setExpendedCount] = useState(0)
   const [copper, setCopper] = useState(0)
@@ -141,17 +115,21 @@ export default function ItemSlot({ characterName, idx, heroPath, inclinations, w
       setSilver(newItem.silver)
       setGold(newItem.gold)
     }
+    setLoaded(true)
 
     return () => {}
-  }, [characterName])
+  }, [characterName, idx, loaded])
 
   useEffect(() => {
     onPick(item, note)
-  }, [weightArray, itemNameArray, item])
+  }, [weightArray, itemNameArray, item, note, onPick, idx])
 
   // Save item to local storage when anything changes
   useEffect(() => {
     if (!characterName) {
+      return
+    }
+    if (!loaded) {
       return
     }
 
@@ -171,30 +149,27 @@ export default function ItemSlot({ characterName, idx, heroPath, inclinations, w
         gold,
       }
 
-      console.log('Saving item with key ', itemKey, ' and payload ', itemPayload)
       SaveCharacterField(itemKey, JSON.stringify(itemPayload))
-
-      return () => {}
     }
   }, [characterName, item, note, expendedCount, copper, silver, gold])
 
   const incrementExpended = () => setExpendedCount(expendedCount + 1)
   const decrementExpended = () => setExpendedCount(expendedCount - 1)
 
-  const pickItem = (itemName) => {
+  const pickItem = (itemName: string) => {
     setNote('')
 
     if (!itemName) {
       setItem(null)
-      onPick(null)
+      onPick(null, '')
       return
     }
 
-    const foundItem = items.find((i) => i.label !== '' && itemName.startsWith(i.label))
+    const foundItem = ITEMS.find((i) => i.label !== '' && itemName.startsWith(i.label)) || null
     setItem(foundItem)
   }
 
-  const formatItem = (item) => {
+  const formatItem = (item: Item) => {
     if (!item) {
       return ''
     }
@@ -203,7 +178,7 @@ export default function ItemSlot({ characterName, idx, heroPath, inclinations, w
   }
 
   const filteredItems =
-    items
+    ITEMS
       .filter((i) => i.label !== 'Delvers Pack (bulky)' || heroPath === DELVER)
       .filter((i) => i.label !== 'Lockpicks (3)' || inclinations.some((inc) => inc.inclination === LOCKPICKING))
       .filter((i) => i.label !== 'Healing Kit (6)' || inclinations.some((inc) => inc.inclination === CHIRURGEON))
@@ -230,7 +205,7 @@ export default function ItemSlot({ characterName, idx, heroPath, inclinations, w
                      variant="outlined"
                      fullWidth
                      value={note}
-                     onChange={(ev) => setNote(ev.target.value)}
+                     onChange={(ev: React.ChangeEvent<HTMLInputElement>) => setNote(ev.target.value)}
           />
           <IconButton onClick={() => setItem(null)}><Cancel /></IconButton>
         </Stack>
@@ -246,7 +221,8 @@ export default function ItemSlot({ characterName, idx, heroPath, inclinations, w
                       style={{ width: '100%' }}
                       renderInput={(params) => <TextField {...params} />}
                       value={item ? item.label : ''}
-                      onChange={(v, vv) => pickItem(vv)}
+                      onChange={(v, vv: AutocompleteValue<string, undefined, undefined, undefined>) => pickItem(vv || '')}
+
         />
         {(item || {}).qty === 2 && (
           <div style={{ marginLeft: 10 }}>

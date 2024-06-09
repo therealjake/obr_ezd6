@@ -1,14 +1,23 @@
 import React, { useEffect, useState } from 'react'
 import { Grid, Typography } from '@mui/material'
 import ItemSlot from './ItemSlot'
+import { Inclination, Item } from './GameTypes'
+import { BRUTE, WARRIOR } from './HeroPath'
 
-export default function Inventory({ characterName, heroPath, inclinations, onInventoryChange }) {
-  const maxWeight = (heroPath === 'Warrior' || heroPath === 'Brute') ? 12 : 8
+type InventoryProps = {
+  characterName: string,
+  heroPath: string,
+  inclinations: Array<Inclination>,
+  onInventoryChange: (inventory: string) => void,
+}
+
+export default function Inventory({ characterName, heroPath, inclinations, onInventoryChange }: InventoryProps) {
+  const maxWeight = (heroPath === WARRIOR || heroPath === BRUTE) ? 12 : 8
 
   const [weight, setWeight] = useState([0, 0, 0, 0, 0, 0, 0, 0, 0, 0])
-  const [itemNames, setItemNames] = useState([])
+  const [itemNames, setItemNames] = useState<Array<string | null>>([])
 
-  const selectItem = (idx, item, note) => {
+  const selectItem = (idx: number, item: Item | null, note: string | null) => {
     const newH = [...weight]
     const newN = [...itemNames]
 
@@ -49,7 +58,7 @@ export default function Inventory({ characterName, heroPath, inclinations, onInv
           <ItemSlot key={idx}
                     characterName={characterName}
                     idx={idx + 1}
-                    onPick={(item, note) => selectItem(idx, item, note)}
+                    onPick={(item: Item | null, note: string | null) => selectItem(idx, item, note)}
                     heroPath={heroPath}
                     inclinations={inclinations}
                     weightArray={weight}
@@ -63,8 +72,6 @@ export default function Inventory({ characterName, heroPath, inclinations, onInv
       {totalWeight > maxWeight && (
         <Typography variant="caption" style={{ color: 'red' }}>OVERLOADED</Typography>
       )}
-
-      {/* {itemNames.filter(v => !!v).join(', ')} */}
     </div>
   )
 }
