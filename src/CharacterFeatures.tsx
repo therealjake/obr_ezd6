@@ -1,6 +1,7 @@
-import React, { useEffect, useState } from 'react'
-import { AIR_ELEMENTALIST, BEASTMASTER, BLASTMASTER, BOTANICALIST, BRUTE, CONJURER, DELVER, EARTH_ELEMENTALIST, ELEMENTALIST, FIRE_ELEMENTALIST, FRIAR, ILLUSIONIST, NECROMANCER, RASCAL, SEER, SHADOWEAVER, SHAPESHIFTER, SKALD, WARDEN, WARRIOR, WATER_ELEMENTALIST } from './HeroPath'
-import { Chip, Typography } from '@mui/material'
+import React from 'react'
+
+import { AIR_ELEMENTALIST, BEASTMASTER, BLASTMASTER, BOTANICALIST, BRUTE, CONJURER, DELVER, EARTH_ELEMENTALIST, FIRE_ELEMENTALIST, FRIAR, ILLUSIONIST, NECROMANCER, RASCAL, SEER, SHADOWEAVER, SHAPESHIFTER, SKALD, WARDEN, WARRIOR, WATER_ELEMENTALIST } from './HeroPath'
+import { Typography } from '@mui/material'
 import { DWARF, ELF, GOBLIN, HALFLING, HUMAN } from './Ancestry'
 
 const ANCESTRY_FEATURES = [
@@ -11,7 +12,6 @@ const ANCESTRY_FEATURES = [
   { ancestry: HALFLING, featureName: 'Underfoot', feature: 'Larger foes have a hard time hitting you (+1 on target number).' },
   { ancestry: GOBLIN, featureName: 'Nooks and Crannies', feature: 'As part of your move action you can take shelter behind any bit of cover. Enemies cannot attack you until your next turn.' },
   { ancestry: GOBLIN, featureName: 'Night Sight', feature: 'See twice as far in dim light' },
-  // { ancestry: XXXX, featureName: 'XXXX', feature: 'XXXXX' },
 ]
 
 const PATH_FEATURES = [
@@ -40,7 +40,6 @@ const PATH_FEATURES = [
   { heroPath: WARRIOR, featureName: 'Dual Weapns', feature: 'While wielding weapons in both hands, you have an extra boon while fighting in melee.' },
   { heroPath: WARDEN, featureName: 'Trailfinder', feature: 'You can follow traces left by any passing creature.' },
   { heroPath: WARDEN, featureName: 'Forager', feature: 'In the wilderness you always know how to hunt, forage, and fish for sustenance. You can feed yourself and the party while traveling.' },
-  // { heroPath: XXXX, featureName: 'XXXX', feature: 'XXXXX' },
 ]
 
 const SUBCLASS_FEATURES = [
@@ -88,7 +87,14 @@ const SUBCLASS_FEATURES = [
   { subclass: SHAPESHIFTER, featureName: 'Shapechange - Small beast', feature: 'You transform into a tiny flying beast (insect, bird, etc). This form can take 1 strike. Changing in combat requires overcoming 3 resistance dice.' },
 ]
 
-export default function CharacterFeatures({ ancestry, heroPath, subclass, inclinations }) {
+type CharacterFeaturesProps = {
+  ancestry: string,
+  heroPath: string,
+  subclass: string,
+  inclinations: Array<{ inclination: string, note: string }>
+}
+
+export default function CharacterFeatures({ ancestry, heroPath, subclass, inclinations }: CharacterFeaturesProps) {
   return (
     <div style={{ flex: 1, border: '1px solid darkGray', padding: 10, marginTop: 20 }}>
       <Typography variant="h6">

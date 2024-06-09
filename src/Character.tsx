@@ -1,4 +1,4 @@
-import React, { createContext, useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 
 import { Stack, TextField } from '@mui/material'
 import Ancestry from './Ancestry'
@@ -17,7 +17,8 @@ import { LoadCharacterField, SaveCharacterField, syncCharacter } from './Charact
 import { BroadcastHandler } from './BroadcastHandler'
 import Inventory from './Inventory'
 import Allies from './Allies'
-import CharacterStatContext, { useKarmaContext } from './CharacterStatContext'
+import CharacterStatContext, { useKarmaContext, useStrikesContext } from './CharacterStatContext'
+import { Boon, Inclination } from './GameTypes'
 
 // --- To add ---
 // Sharing die rolls
@@ -34,15 +35,15 @@ export default function Character() {
   const [name, setName] = useState('')
   const [heroPath, setHeroPath] = useState('')
   const [subclass, setSubclass] = useState('')
-  const [ancestry, setAncestry] = useState(null)
-  const [inclinations, setInclinations] = useState([])
-  const [boons, setBoons] = useState([])
-  const [strikes, setStrikes] = useState(3)
+  const [ancestry, setAncestry] = useState<string>('')
+  const [inclinations, setInclinations] = useState<Array<Inclination>>([])
+  const [boons, setBoons] = useState<Array<Boon>>([])
   const [inventory, setInventory] = useState('')
 
   const { karma } = useKarmaContext()
+  const { strikes } = useStrikesContext()
 
-  const handleName = (ev) => {
+  const handleName = (ev: React.ChangeEvent<HTMLInputElement>) => {
     const newName = ev.target.value
     setName(newName)
     if (newName) {
@@ -50,21 +51,23 @@ export default function Character() {
     }
   }
 
-  const handleAncestry = (ancestry) => setAncestry(ancestry)
+  const handleAncestry = (ancestry: string) => setAncestry(ancestry)
 
-  const handleHeroPath = (hp, sc) => {
+  const handleHeroPath = (hp: string, sc?: string) => {
     setHeroPath(hp)
     if (hp) {
       SaveCharacterField('heroPath', hp)
     }
 
-    setSubclass(sc)
-    if (sc) {
+    if (sc === undefined) {
+      setSubclass('')
+    } else {
+      setSubclass(sc)
       SaveCharacterField('subclass', sc)
     }
   }
 
-  const handleInclinations = (inclinations) => setInclinations(inclinations)
+  const handleInclinations = (inclinations: Array<Inclination>) => setInclinations(inclinations)
 
   useEffect(() => setName(LoadCharacterField('name') || ''), [])
 
@@ -83,8 +86,8 @@ export default function Character() {
       <div style={{display: 'flex', marginTop: 10, flexDirection: 'column', width: 680 }}>
         <Stack direction="row">
           <TextField sx={{ flex: 5 }} label="Name" value={name} onChange={handleName} />
-          <Spacer/>
-          <Roller boons={boons} />
+          <Spacer />
+          <Roller boons={boons} karma={0} onSpendKarma={() => null}/>
         </Stack>
 
         <Stack direction="row"
@@ -99,7 +102,7 @@ export default function Character() {
         <Inclinations ancestry={ancestry} heroPath={heroPath} onChange={handleInclinations} />
 
         <Stack direction="row" style={{ display: 'flex', justifyContent: 'space-between', marginTop: 20 }}>
-          <Health heroPath={heroPath} strikes={strikes} onChangeStrikes={setStrikes} />
+          <Health heroPath={heroPath} />
           <Karma />
           <HeroDie inclinations={inclinations} />
           <Armor heroPath={heroPath} inventory={inventory} />
