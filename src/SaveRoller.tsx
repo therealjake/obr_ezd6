@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { Button, Dialog, DialogActions, DialogContent, Divider, IconButton, Stack, TextField, Typography } from '@mui/material'
-import { Die, rollDie } from './Roller'
+import { Die, rollDie } from './Dice'
 import { AddCircle, RemoveCircle } from '@mui/icons-material'
 import { useHeroDiceContext, useKarmaContext, useStrikesContext } from './CharacterStatContext'
 
@@ -61,7 +61,7 @@ function SaveRollChain(
       <Typography variant="caption">Damage</Typography>
       { allRolls.map((r, rollIdx) => (
         <Stack key={rollIdx}>
-          <Die roll={r.roll + (rollIdx === 0 ? karmaSpent : 0)} />
+          <Die value={r.roll + (rollIdx === 0 ? karmaSpent : 0)} size={64} />
           {r.reroll && <Typography variant="caption" sx={{ mb: 1 }}>(reroll)</Typography>}
         </Stack>
       ))}

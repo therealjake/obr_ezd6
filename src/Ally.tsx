@@ -23,8 +23,7 @@ export default function Ally({ id, onRemove }: AllyProps) {
   useEffect(() => {
     const allyKey = `ally-${id}`
 
-    const _ally = LoadCharacterField(allyKey)
-    console.log("This is what we loaded: ", _ally, " from key ", allyKey)
+    const _ally = LoadCharacterField<string>(allyKey)
     if (_ally) {
       const newAlly = JSON.parse(_ally)
       setName(newAlly.name)

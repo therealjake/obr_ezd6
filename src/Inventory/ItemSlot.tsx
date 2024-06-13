@@ -36,7 +36,7 @@ export default function ItemSlot({ characterName, idx, heroPath, inclinations, w
     }
     const itemKey = `${characterName}-item-${idx}`
 
-    const _item = LoadCharacterField(itemKey)
+    const _item = LoadCharacterField<string>(itemKey)
     if (_item) {
       const newItem = JSON.parse(_item)
       setItem(newItem.item)

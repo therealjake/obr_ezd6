@@ -32,7 +32,7 @@ export default function Character() {
   const { karma } = useKarmaContext()
   const { strikes } = useStrikesContext()
 
-  useEffect(() => setName(LoadCharacterField('name') || ''), [])
+  useEffect(() => setName(LoadCharacterField<string>('name') || ''), [])
 
   // TODO: Extract syncing-to-owlbear elsewhere
   useEffect(() => {
@@ -78,7 +78,7 @@ export default function Character() {
         <Stack direction="row">
           <TextField sx={{ flex: 5 }} label="Name" value={name} onChange={handleName} />
           <Spacer />
-          <Roller boons={boons} karma={0} onSpendKarma={() => null}/>
+          <Roller boons={boons} />
         </Stack>
 
         <Stack direction="row"

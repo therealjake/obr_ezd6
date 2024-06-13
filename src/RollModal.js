@@ -1,7 +1,7 @@
 import React from 'react'
 import { theme } from './App'
 import { Stack, ThemeProvider, Typography } from '@mui/material'
-import { D1, D2, D3, D4, D5, D6 } from './Rules'
+import { D1, D2, D3, D4, D5, D6 } from './Dice'
 
 export default function RollModal({ search }) {
   const parts = search.replace('?', '').split("&")

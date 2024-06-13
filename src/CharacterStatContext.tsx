@@ -1,9 +1,5 @@
 import React, { useState, useContext, useEffect, createContext } from 'react'
-import { SaveCharacterField } from './CharacterStore'
-
-function LoadNumCharacterField(field: string): number {
-  return Number(localStorage.getItem(field)) || 0
-}
+import { LoadCharacterField, SaveCharacterField } from './CharacterStore'
 
 const noOp = () => {}
 
@@ -16,9 +12,9 @@ export const useStrikesContext = () => useContext(StrikesCtx)
 export const useHeroDiceContext = () => useContext(HeroDiceCtx)
 
 export default function CharacterStatContext({ children }: { children: React.ReactNode }) {
-  const [karma, setKarma] = useState<number>(LoadNumCharacterField('karma'))
-  const [heroDice, setHeroDice] = useState<number>(LoadNumCharacterField('heroDice'))
-  const [strikes, setStrikes] = useState<number>(LoadNumCharacterField('strikes'))
+  const [strikes, setStrikes] = useState<number>(LoadCharacterField<number>('strikes') || 1)
+  const [karma, setKarma] = useState<number>(LoadCharacterField<number>('karma') || 0)
+  const [heroDice, setHeroDice] = useState<number>(LoadCharacterField<number>('heroDice') || 0)
 
   useEffect(() => {
     console.log('Karma updated, saving to local storage')

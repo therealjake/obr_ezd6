@@ -24,7 +24,7 @@ export default function Ancestry({ onChange }: AncestryProps) {
   useEffect(() => onChange(ancestry), [ancestry])
 
   useEffect(() => {
-    const _ancestry = LoadCharacterField('ancestry')
+    const _ancestry = LoadCharacterField<string>('ancestry')
     setAncestry(_ancestry || '')
   }, [])
 
