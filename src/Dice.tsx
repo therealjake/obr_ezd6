@@ -1,4 +1,5 @@
 import { LooksOneTwoTone, LooksTwoTwoTone, Looks3TwoTone, Looks4TwoTone, Looks5TwoTone, Looks6TwoTone } from '@mui/icons-material'
+import { useEffect, useState } from 'react'
 
 export function rollDie() {
   return 1 + Math.floor(Math.random() * 6)
@@ -25,6 +26,25 @@ export function Die({ value, size }: DieProps) {
   } else {
     return <span>BAD DIE: {value}</span>
   }
+}
+
+export function AnimatedDie({ value, size, animateUntil }: { value: number, size: number, animateUntil: number }) {
+  const [visibleFace, setVisibleFace] = useState(rollDie())
+
+  useEffect(() => { setVisibleFace(value) }, [value])
+
+  useEffect(() => {
+    const intervalId = setInterval(() => {
+      if (new Date().getTime() > animateUntil) {
+        clearInterval(intervalId)
+        setVisibleFace(value)
+      } else {
+        setVisibleFace(rollDie())
+      }
+    }, 50)
+  }, [value, animateUntil])
+
+  return <Die value={visibleFace} size={size} />
 }
 
 export function D1({ size }: DieProps) {

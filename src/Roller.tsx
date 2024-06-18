@@ -4,46 +4,28 @@ import { Button, Dialog, DialogActions, DialogContent, DialogTitle, Divider, Ico
 import { RemoveCircle, AddCircle } from '@mui/icons-material'
 import { BoonChip } from './Boons'
 import { BroadcastHandler } from './BroadcastHandler'
-import { useKarmaContext } from './CharacterStatContext'
-import { Die } from './Dice'
+import { useHeroDiceContext, useKarmaContext } from './CharacterStatContext'
+import { AnimatedDie, Die } from './Dice'
+import { Boon } from './GameTypes'
 
 export function rollDie() {
   return 1 + Math.floor(Math.random() * 6)
 }
 
-function AnimatedDie({ roll }) {
-  const [visibleRoll, setVisibleRoll] = useState(rollDie())
-  let rollsLeft = 0
-
-  useEffect(() => { setVisibleRoll(roll.value) }, [roll.value])
-
-  useEffect(() => {
-    const intervalId = setInterval(() => {
-      rollsLeft--
-      if (rollsLeft <= 0) {
-        clearInterval(intervalId)
-        setVisibleRoll(roll.value)
-      } else {
-        setVisibleRoll(rollDie())
-      }
-    }, 50)
-  }, [roll.value, rollsLeft])
-
-  return <Die value={visibleRoll} size={64} />
+type RollSet = {
+  id: number,
+  values: Array<number>,
+  animateUntil: number,
+  highRoll: number,
+  rerolled: boolean,
 }
 
-class RollValue {
-  constructor(roll) {
-    this.id = Math.random()
-    this.value = roll
-  }
-}
-
-export default function Roller({ boons }) {
+export default function Roller({ boons }: { boons: Boon[] }) {
   const [open, setOpen] = useState(false)
-  const [rolls, setRolls] = useState([])
+  const [rolls, setRolls] = useState<Array<RollSet>>([])
   const [target, setTarget] = useState(3)
   const { karma, setKarma } = useKarmaContext()
+  const { heroDice, setHeroDice } = useHeroDiceContext()
 
   const openDialog = () => {
     setRolls([])
@@ -55,22 +37,20 @@ export default function Roller({ boons }) {
     setOpen(false)
   }
 
-  const doRoll = (diceCount) => {
+  const doRoll = (diceCount: number) => {
     if (!rolls || rolls.length === 0) {
       BroadcastHandler.markNewRollSet()
     }
 
-    const newRolls = []
+    const newRolls: RollSet = { id: Math.random(), values: [], highRoll: 0, rerolled: false, animateUntil: new Date().getTime() + 500 }
     let max = 0
-    let min = 6
     for (var i = 0; i < diceCount; i++) {
       const roll = rollDie()
       max = Math.max(max, roll)
-      min = Math.min(min, roll)
-      newRolls.push(new RollValue(roll))
+      newRolls.values.push(roll)
     }
-
-    newRolls.sort((rv1, rv2) => rv2.value - rv1.value)
+    newRolls.values.sort((v1, v2) => v2 - v1)
+    newRolls.highRoll = max
 
     BroadcastHandler.sendRoll(newRolls)
     const rollHistory = [...rolls]
@@ -80,7 +60,9 @@ export default function Roller({ boons }) {
 
   const tryForCrit = () => {
     const _rolls = [...rolls]
-    _rolls.unshift([new RollValue(rollDie())])
+    const dieRoll = rollDie()
+    const newRoll: RollSet = { id: Math.random(), values: [dieRoll], highRoll: dieRoll, rerolled: false, animateUntil: new Date().getTime() + 500 }
+    _rolls.unshift(newRoll)
     setRolls(_rolls)
   }
 
@@ -89,20 +71,9 @@ export default function Roller({ boons }) {
       return
     }
 
-    let highestValue = 0
-    let highestRollIndex = -1
-    rolls[0].forEach((roll, idx) => {
-      if (roll.value >= highestValue) {
-        highestValue = roll.value
-        highestRollIndex = idx
-      }
-    })
-    if (highestValue >= 6) {
-      return
-    }
-
     const newRolls = [...rolls]
-    newRolls[0][highestRollIndex].value += 1
+    newRolls[0].values[0] += 1
+    newRolls[0].highRoll += 1
     setRolls(newRolls)
 
     setKarma(Math.max(0, karma - 1))
@@ -110,15 +81,22 @@ export default function Roller({ boons }) {
     BroadcastHandler.sendUpgrade(newRolls[0])
   }
 
-  const canSpendKarma = karma > 0 && rolls.length > 0 && rolls[0][0].value > 1 && rolls[0][0].value < 6
+  const spendHeroDie = () => {
+    const newRolls = [...rolls]
+    newRolls[0].rerolled = true
+    const newRoll = rollDie()
+    newRolls.unshift({ id: Math.random(), values: [newRoll], highRoll: newRoll, rerolled: false, animateUntil: new Date().getTime() + 500  })
+    setRolls(newRolls)
+    setHeroDice(heroDice - 1)
+  }
 
-  console.log('Rolls: ', rolls)
+  const canSpendKarma = karma > 0 && rolls.length > 0 && rolls[0].highRoll > 1 && rolls[0].highRoll < 6
 
-  const successCount = rolls.reduce((acc, roll, idx) => {
+  const successCount = rolls.filter(r => !r.rerolled).reduce((acc, roll, idx) => {
     if (idx === rolls.length - 1) {
-      return roll[0].value >= target ? acc + 1 : acc
+      return roll.highRoll >= target ? acc + 1 : acc
     } else {
-      return roll[0].value === 6 ? acc + 1 : acc
+      return roll.highRoll === 6 ? acc + 1 : acc
     }
   }, 0)
 
@@ -154,7 +132,6 @@ export default function Roller({ boons }) {
               </IconButton>
             </Stack>
 
-
             { rolls.length === 0 && (
               <Stack direction="row" sx={{ width: '100%', mb: 2, justifyContent: 'space-evenly' }}>
                 <Button variant="outlined" onClick={() => { doRoll(1) }}>Roll 1 Die</Button>
@@ -164,35 +141,39 @@ export default function Roller({ boons }) {
               </Stack>
             )}
 
-            { rolls[0][0].value === 6 && (
+            <Stack direction="column" sx={{ alignItems: 'start' }}>
+              { [...rolls].reverse().map((roll, idx) => (
+                <Stack key={idx} direction="row" sx={{ mb: 2, alignItems: 'center', justifyContent: 'space-between', width: '100%' }}>
+                  { roll.values.map((r, rIdx) => <AnimatedDie key={rIdx} value={r} size={64} animateUntil={roll.animateUntil} />) }
+                  { !roll.rerolled && (
+                    <div>
+                      { idx === 0 ? (
+                        roll.highRoll >= target && <Typography sx={{ ml: 2, color: 'green' }}>Success!</Typography>
+                      ) : (
+                        roll.highRoll === 6 && <Typography sx={{ ml: 2, color: 'green' }}>Success!</Typography>
+                      )}
+                    </div>
+                  )}
+
+                  { roll.rerolled && <div style={{ position: 'absolute', width: 64 * roll.values.length, border: '1px solid gray' }} /> }
+                </Stack>
+              ))}
+            </Stack>
+
+            { rolls.length > 0 && rolls[0].highRoll === 6 && (
               <>
                 <Typography sx={{ mb: 1 }}>6! Roll again…</Typography>
                 <Button variant="contained" onClick={tryForCrit} sx={{ mb: 2 }}>Roll Again</Button>
               </>
             )}
 
-            <Stack direction="column" sx={{ alignItems: 'start' }}>
-              { rolls.map((roll, idx) => (
-                <Stack key={idx} direction="row" sx={{ mb: 2, alignItems: 'center', justifyContent: 'space-between', width: '100%' }}>
-                  { roll.map(r => <Die key={r.id} value={r.value} size={64} />) }
-                  <div>
-                    { idx === rolls.length - 1 ? (
-                      roll[0].value >= target && <Typography sx={{ ml: 2, color: 'green' }}>Success!</Typography>
-                    ) : (
-                      roll[0].value === 6 && <Typography sx={{ ml: 2, color: 'green' }}>Success!</Typography>
-                    )}
-                  </div>
-                </Stack>
-              ))}
-            </Stack>
-
             { rolls.length > 0 && (
               <Stack direction="row" sx={{ justifyContent: 'space-around' }}>
                 <Stack direction="column" >
-                  { rolls[0][0].value < 6 && (
+                  { rolls[0].highRoll < 6 && (
                     <>
                       <Button onClick={upgrade} variant="outlined" disabled={!canSpendKarma}>Spend Karma</Button>
-                      <Button onClick={upgrade} disabled={karma < 1}>Spend Hero Die</Button>
+                      <Button onClick={spendHeroDie} disabled={heroDice < 1}>Spend Hero Die</Button>
                     </>
                   )}
                 </Stack>
@@ -214,7 +195,7 @@ export default function Roller({ boons }) {
           <div style={{ marginTop: 30 }}>
             <strong>Boons</strong>
             <div style={{ marginTop: 5 }}>
-              { boons.map(bt => <BoonChip key={bt.label || bt.inclination} compact boonObj={bt}/>) }
+              { boons.map(bt => <BoonChip key={bt.label} compact boonObj={bt}/>) }
             </div>
           </div>
         </DialogContent>

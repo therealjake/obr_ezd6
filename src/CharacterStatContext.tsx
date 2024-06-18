@@ -17,7 +17,7 @@ export default function CharacterStatContext({ children }: { children: React.Rea
   const [heroDice, setHeroDice] = useState<number>(LoadCharacterField<number>('heroDice') || 0)
 
   useEffect(() => {
-    console.log('Karma updated, saving to local storage')
+    console.log('Karma updated to ' + karma + ', saving to local storage')
     SaveCharacterField('karma', karma)
   }, [karma])
   
