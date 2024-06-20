@@ -90,7 +90,7 @@ export default function Inclinations({ ancestry, heroPath, onChange }: Inclinati
     const newValue = typeof rawValue === 'string' ? rawValue.split(',') : rawValue
     setInclinations(newValue)
 
-    // TODO: Extract this elsewhere maybe?
+    // TODO: Extract saving/loading upstream maybe?
     SaveCharacterField('inclinations', rawValue)
   }
 
@@ -100,7 +100,7 @@ export default function Inclinations({ ancestry, heroPath, onChange }: Inclinati
   }, [inclinations])
 
   useEffect(() => {
-    const _i = LoadCharacterField('inclinations')
+    const _i = LoadCharacterField<string>('inclinations')
     const _iArray = _i ? _i.split(',').map(v => v.trim()) : []
     setInclinations(_iArray)
   }, [])

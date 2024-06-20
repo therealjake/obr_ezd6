@@ -15,7 +15,7 @@ export default function Allies() {
   // Load list of allies from local storage
   useEffect(() => {
     const allyKey = `ally-list`
-    const _allyIds = LoadCharacterField(allyKey)
+    const _allyIds = LoadCharacterField<string>(allyKey)
     console.log('allyIds', _allyIds)
     if (_allyIds) {
       console.log('Saving the ally list.')

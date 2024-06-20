@@ -1,5 +1,5 @@
 import { Typography } from '@mui/material'
-import { D1, D6 } from './Rules'
+import { D1, D6 } from './Dice'
 
 export default function MagicRules() {
   return (

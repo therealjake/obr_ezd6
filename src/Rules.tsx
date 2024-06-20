@@ -1,34 +1,5 @@
 import { Button, Typography } from '@mui/material'
-import { LooksOneTwoTone, LooksTwoTwoTone, Looks3TwoTone, Looks4TwoTone, Looks5TwoTone, Looks6TwoTone } from '@mui/icons-material'
-
-type DieProps = {
-  size?: number
-}
-
-export function D1({ size }: DieProps) {
-  const ss = size ? Number(size) : 20
-  return <LooksOneTwoTone sx={{ color: "red", width: ss, height: ss, verticalAlign: 'middle' }} />
-}
-export function D2({ size }: DieProps) {
-  const ss = size ? Number(size) : 20
-  return <LooksTwoTwoTone sx={{ width: ss, height: ss, verticalAlign: 'middle' }} />
-}
-export function D3({ size }: DieProps) {
-  const ss = size ? Number(size) : 20
-  return <Looks3TwoTone sx={{ width: ss, height: ss, verticalAlign: 'middle' }} />
-}
-export function D4({ size }: DieProps) {
-  const ss = size ? Number(size) : 20
-  return <Looks4TwoTone sx={{ width: ss, height: ss, verticalAlign: 'middle' }} />
-}
-export function D5({ size }: DieProps) {
-  const ss = size ? Number(size) : 20
-  return <Looks5TwoTone sx={{ width: ss, height: ss, verticalAlign: 'middle' }} />
-}
-export function D6({ size }: DieProps) {
-  const ss = size ? Number(size) : 20
-  return <Looks6TwoTone sx={{ color: "green", width: ss, height: ss, verticalAlign: 'middle' }} />
-}
+import { D1, D2, D3, D4, D5, D6 } from './Dice'
 
 type RulesProps = {
   onJumpToMagick: () => void

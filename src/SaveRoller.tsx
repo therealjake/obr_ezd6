@@ -1,6 +1,6 @@
-import React, { useState } from 'react'
+import { useState } from 'react'
 import { Button, Dialog, DialogActions, DialogContent, Divider, IconButton, Stack, TextField, Typography } from '@mui/material'
-import { Die, rollDie } from './Roller'
+import { AnimatedDie, Die, rollDie } from './Dice'
 import { AddCircle, RemoveCircle } from '@mui/icons-material'
 import { useHeroDiceContext, useKarmaContext, useStrikesContext } from './CharacterStatContext'
 
@@ -13,6 +13,7 @@ type SaveRollChainProps = {
   heroDiceLeft: number,
   damageAccepted: boolean,
   saveTarget: number,
+  animateUntil: number,
   onSpendKarma: (idx: number) => void,
   onSpendHeroDie: (idx: number) => void,
   onAcceptDamage: (idx: number) => void,
@@ -28,6 +29,7 @@ function SaveRollChain(
     heroDiceLeft,
     damageAccepted,
     saveTarget, 
+    animateUntil,
     onSpendKarma, 
     onSpendHeroDie,
     onAcceptDamage,
@@ -48,11 +50,12 @@ function SaveRollChain(
 
   type Roll = {
     roll: number,
-    reroll: boolean
+    reroll: boolean,
+    animateUntil: number,
   }
-  const allRolls: Array<Roll> = rolls.map(r => ({ roll: r, reroll: false }))
+  const allRolls: Array<Roll> = rolls.map(r => ({ roll: r, reroll: false, animateUntil: rerolls ? new Date().getTime() : animateUntil }))
   if (rerolls) {
-    rerolls.forEach(r => allRolls.push({ roll: r, reroll: true }))
+    rerolls.forEach(r => allRolls.push({ roll: r, reroll: true, animateUntil }))
   }
   allRolls.sort((r1, r2) => r2.roll - r1.roll)
 
@@ -60,8 +63,8 @@ function SaveRollChain(
     <Stack direction="column" alignItems="center" sx={{ width: '33%' }}>
       <Typography variant="caption">Damage</Typography>
       { allRolls.map((r, rollIdx) => (
-        <Stack key={rollIdx}>
-          <Die roll={r.roll + (rollIdx === 0 ? karmaSpent : 0)} />
+        <Stack key={rollIdx} alignItems="center">
+          <AnimatedDie value={r.roll + (rollIdx === 0 ? karmaSpent : 0)} size={rollIdx === 0 ? 64 : 32} animateUntil={r.animateUntil} />
           {r.reroll && <Typography variant="caption" sx={{ mb: 1 }}>(reroll)</Typography>}
         </Stack>
       ))}
@@ -98,6 +101,7 @@ type RollSet = {
   index: number,
   rolls: Array<number>,
   reroll: Array<number>,
+  animateUntil: number,
   karmaSpent: number,
   heroDiceSpent: boolean,
   damageAccepted: boolean,
@@ -165,6 +169,7 @@ export default function SaveRoller({ saveTarget, saveWithAdvantage }: SaveRoller
     const rs = _newRolls[idx]
     if (!rs.heroDiceSpent) {
       rs.heroDiceSpent = true
+      rs.animateUntil = new Date().getTime() + 500
       setRolls(_newRolls)
     }
   }
@@ -173,8 +178,9 @@ export default function SaveRoller({ saveTarget, saveWithAdvantage }: SaveRoller
     reset()
 
     const _rollSets = []
+    const animateUntil = new Date().getTime() + 500
     for (var i = 0; i < dmgCount; i++) {
-      const rs: RollSet = { index: i, rolls: [], reroll: [], karmaSpent: 0, heroDiceSpent: false, damageAccepted: false}
+      const rs: RollSet = { index: i, rolls: [], reroll: [], karmaSpent: 0, heroDiceSpent: false, damageAccepted: false, animateUntil }
       rs.rolls.push(rollDie())
       rs.reroll.push(rollDie()) // I am rolling rerolls now so resetting doesnt let you try for a better roll
       if (saveWithAdvantage) {
@@ -275,6 +281,7 @@ export default function SaveRoller({ saveTarget, saveWithAdvantage }: SaveRoller
                                    karmaSpent={rs.karmaSpent}
                                    damageAccepted={rs.damageAccepted}
                                    saveTarget={saveTarget}
+                                   animateUntil={rs.animateUntil}
                                    heroDiceLeft={heroDiceLeft}
                                    onSpendKarma={recordKarmaSpent}
                                    onSpendHeroDie={recordReroll}

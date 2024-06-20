@@ -1,6 +1,18 @@
 import OBR from '@owlbear-rodeo/sdk'
+import { Inclination } from './GameTypes'
 
 let timeout = 0
+type SyncCharacterProps = {
+  name: string,
+  ancestry: string,
+  heroPath: string,
+  subclass: string,
+  inclinations: Array<Inclination>,
+  karma: number,
+  strikes: number,
+  inventory: string,
+}
+
 export function syncCharacter({
   name,
   ancestry,
@@ -10,7 +22,7 @@ export function syncCharacter({
   karma,
   strikes,
   inventory,
-}) {
+} : SyncCharacterProps) {
   if (timeout) {
     window.clearTimeout(timeout)
   }
@@ -27,23 +39,14 @@ export function syncCharacter({
   }, 2000)
 }
 
-// export async function loadCharacter() {
-//   if (OBR.isReady) {
-//     const player = OBR.player
-//     const metadata = await player.getMetadata()
-//     metadata['com.snak.obr_ezd6'] = { latest: new Date().getTime() }
-//     await player.setMetadata(metadata)
-//   }
-// }
-
-export function LoadCharacterField(field) {
-  return localStorage.getItem(field)
+export function LoadCharacterField<T>(field: string): T | null {
+  return localStorage.getItem(field) as T
 }
 
-export function WipeCharacterField(field) {
+export function WipeCharacterField(field: string) {
   localStorage.removeItem(field)
 }
 
-export function SaveCharacterField(field, value) {
-  localStorage.setItem(field, value)
+export function SaveCharacterField<T>(field: string, value: T) {
+  localStorage.setItem(field, String(value))
 }
